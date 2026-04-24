@@ -1,0 +1,260 @@
+/*
+ * DJ Franco — theme polish
+ * Kept intentionally small. Most styling lives in theme.json.
+ * This file adds motion, marquee, gradient text and a few component tweaks.
+ */
+
+:root {
+  --dj-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------- Accessibility ---------- */
+.skip-link.screen-reader-text {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.skip-link.screen-reader-text:focus {
+  left: 1rem;
+  top: 1rem;
+  width: auto;
+  height: auto;
+  padding: 0.75rem 1rem;
+  background: var(--wp--preset--color--accent);
+  color: var(--wp--preset--color--base);
+  z-index: 9999;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+/* ---------- Base smoothing ---------- */
+html { scroll-behavior: smooth; }
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  background: var(--wp--preset--color--base);
+}
+::selection { background: var(--wp--preset--color--accent); color: var(--wp--preset--color--base); }
+
+/* ---------- Site header gloss ---------- */
+.site-header {
+  backdrop-filter: saturate(140%) blur(14px);
+  -webkit-backdrop-filter: saturate(140%) blur(14px);
+  background: color-mix(in srgb, var(--wp--preset--color--base) 78%, transparent) !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--wp--preset--color--line) 70%, transparent);
+  transition: background 220ms var(--dj-ease), border-color 220ms var(--dj-ease);
+}
+
+/* ---------- Nav hover underline ---------- */
+.djfranco-nav .wp-block-navigation-item__content {
+  position: relative;
+  padding: 0.25rem 0;
+}
+.djfranco-nav .wp-block-navigation-item__content::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -4px;
+  height: 2px;
+  background: var(--wp--preset--color--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 260ms var(--dj-ease);
+}
+.djfranco-nav .wp-block-navigation-item__content:hover::after,
+.djfranco-nav .current-menu-item > .wp-block-navigation-item__content::after { transform: scaleX(1); }
+
+/* ---------- Gradient text helper ---------- */
+.djfranco-gradient-text {
+  background: linear-gradient(135deg, #FF6A00 0%, #FF2D75 50%, #00E5FF 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+/* ---------- Hero ---------- */
+.djfranco-hero .wp-block-cover__inner-container { max-width: 1440px; margin-inline: auto; width: 100%; }
+.djfranco-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 900px 400px at 20% 10%, rgba(255,106,0,0.25), transparent 60%),
+    radial-gradient(ellipse 700px 300px at 85% 80%, rgba(0,229,255,0.18), transparent 60%);
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+.djfranco-page-hero { position: relative; isolation: isolate; }
+.djfranco-page-hero::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 800px 320px at 30% 30%, rgba(255,106,0,0.22), transparent 65%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ---------- Marquee ---------- */
+.djfranco-marquee {
+  overflow: hidden;
+  border-block: 1px solid var(--wp--preset--color--line);
+  padding: 1.25rem 0;
+  background: var(--wp--preset--color--base);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+}
+.djfranco-marquee__track {
+  display: inline-flex;
+  gap: 1.5rem;
+  align-items: center;
+  white-space: nowrap;
+  animation: djfranco-marquee 38s linear infinite;
+  font-family: var(--wp--preset--font-family--display);
+  font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.75rem);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--wp--preset--color--contrast);
+  will-change: transform;
+}
+.djfranco-marquee__dot { color: var(--wp--preset--color--accent); opacity: 0.85; }
+.djfranco-marquee__item:hover { color: var(--wp--preset--color--accent); }
+@keyframes djfranco-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-33.333%); }
+}
+
+/* ---------- Reveal on scroll ---------- */
+.djfranco-reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 700ms var(--dj-ease), transform 700ms var(--dj-ease);
+}
+.djfranco-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---------- Cards hover ---------- */
+.djfranco-card,
+.djfranco-pkg {
+  transition: transform 320ms var(--dj-ease), border-color 320ms var(--dj-ease), box-shadow 320ms var(--dj-ease);
+}
+.djfranco-card:hover,
+.djfranco-pkg:hover {
+  transform: translateY(-4px);
+  border-color: color-mix(in srgb, var(--wp--preset--color--accent) 55%, var(--wp--preset--color--line));
+  box-shadow: var(--wp--preset--shadow--glow-accent);
+}
+.djfranco-pkg--featured { position: relative; }
+.djfranco-pkg--featured:hover { transform: translateY(-4px) scale(1.01); box-shadow: 0 30px 60px -20px rgba(255,45,117,0.55); }
+
+/* ---------- Package list bullet ---------- */
+.djfranco-pkg__list { list-style: none; padding-left: 0; margin: 1rem 0 0; }
+.djfranco-pkg__list li {
+  position: relative;
+  padding-left: 1.5rem;
+}
+.djfranco-pkg__list li::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0.55rem;
+  width: 8px; height: 8px;
+  border-radius: 999px;
+  background: var(--wp--preset--color--accent);
+  box-shadow: 0 0 10px rgba(255,106,0,0.65);
+}
+.djfranco-pkg--featured .djfranco-pkg__list li::before {
+  background: var(--wp--preset--color--base);
+  box-shadow: none;
+}
+
+/* ---------- Logos strip ---------- */
+.djfranco-logos p {
+  color: color-mix(in srgb, var(--wp--preset--color--contrast) 70%, var(--wp--preset--color--muted));
+  transition: color 200ms var(--dj-ease);
+}
+.djfranco-logos p:hover { color: var(--wp--preset--color--accent); }
+
+/* ---------- Image tilt ---------- */
+.djfranco-image-tilt img {
+  transition: transform 600ms var(--dj-ease);
+  will-change: transform;
+}
+.djfranco-image-tilt:hover img {
+  transform: perspective(1000px) rotateX(2deg) rotateY(-2deg) scale(1.02);
+}
+
+/* ---------- Buttons polish ---------- */
+.wp-element-button,
+.wp-block-button__link {
+  transition: transform 200ms var(--dj-ease), background-color 200ms var(--dj-ease), color 200ms var(--dj-ease), box-shadow 200ms var(--dj-ease) !important;
+}
+.wp-block-button:not(.is-style-outline) .wp-element-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px -8px rgba(255,106,0,0.6);
+}
+
+/* ---------- CF7 dark-mode tweak ---------- */
+.djfranco-formwrap .wpcf7-form input[type="text"],
+.djfranco-formwrap .wpcf7-form input[type="email"],
+.djfranco-formwrap .wpcf7-form input[type="tel"],
+.djfranco-formwrap .wpcf7-form input[type="date"],
+.djfranco-formwrap .wpcf7-form select,
+.djfranco-formwrap .wpcf7-form textarea {
+  background: var(--wp--preset--color--base);
+  border: 1px solid var(--wp--preset--color--line);
+  color: var(--wp--preset--color--contrast);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  width: 100%;
+  font-family: inherit;
+  font-size: 1rem;
+  transition: border-color 180ms var(--dj-ease), box-shadow 180ms var(--dj-ease);
+}
+.djfranco-formwrap .wpcf7-form input:focus,
+.djfranco-formwrap .wpcf7-form select:focus,
+.djfranco-formwrap .wpcf7-form textarea:focus {
+  outline: none;
+  border-color: var(--wp--preset--color--accent);
+  box-shadow: 0 0 0 3px rgba(255,106,0,0.2);
+}
+.djfranco-formwrap .wpcf7-form label {
+  display: block;
+  margin-bottom: 1rem;
+  color: var(--wp--preset--color--muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.djfranco-formwrap .wpcf7-form [type="submit"] {
+  background: var(--wp--preset--color--accent);
+  color: var(--wp--preset--color--base);
+  border: 0;
+  padding: 0.95rem 1.75rem;
+  border-radius: 999px;
+  font-family: var(--wp--preset--font-family--heading);
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.djfranco-formwrap .wpcf7-form [type="submit"]:hover {
+  background: var(--wp--preset--color--contrast);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px -8px rgba(255,106,0,0.6);
+}
+
+/* ---------- Footer social ---------- */
+.site-footer .wp-block-social-links .wp-social-link a { transition: transform 180ms var(--dj-ease), color 180ms var(--dj-ease); }
+.site-footer .wp-block-social-links .wp-social-link:hover { transform: translateY(-2px); color: var(--wp--preset--color--accent); }
+
+/* ---------- Mobile tuning ---------- */
+@media (max-width: 780px) {
+  .djfranco-hero { min-height: 78vh !important; }
+  .djfranco-packages .wp-block-columns { gap: 1rem; }
+}

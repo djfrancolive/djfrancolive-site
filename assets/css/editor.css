@@ -1,0 +1,24 @@
+/*
+ * Editor-only styles. Keep the dark palette visible in the block editor
+ * so the client can see what content will look like on the front end.
+ */
+
+body.editor-styles-wrapper,
+.editor-styles-wrapper {
+  background: var(--wp--preset--color--base, #0A0A0B);
+  color: var(--wp--preset--color--contrast, #F5F5F7);
+}
+
+.editor-styles-wrapper ::selection {
+  background: var(--wp--preset--color--accent, #FF6A00);
+  color: var(--wp--preset--color--base, #0A0A0B);
+}
+
+.djfranco-gradient-text {
+  background: linear-gradient(135deg, #FF6A00 0%, #FF2D75 50%, #00E5FF 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}

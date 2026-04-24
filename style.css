@@ -1,0 +1,34 @@
+/*
+Theme Name: DJ Franco
+Theme URI: https://djfrancolive.com
+Author: DJ Franco Live
+Author URI: https://djfrancolive.com
+Description: A premium, high-energy block theme built for DJ Franco Live. Cinematic hero, marquee motion, mix grid, booking packages, press/EPK. Full Site Editing, modern typography, dark-first palette with electric accents.
+Version: 1.0.0
+Requires at least: 6.5
+Tested up to: 6.7
+Requires PHP: 8.0
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: djfranco
+Tags: full-site-editing, block-patterns, music, entertainment, one-column, custom-colors, custom-menu, editor-style, featured-images, threaded-comments, wide-blocks
+*/
+
+/*
+ * Base styles are defined in theme.json (Global Styles). This file exists for
+ * the WordPress theme header and a minimum of reset/utility tweaks that are
+ * awkward to express via theme.json. Most presentation lives in
+ * assets/css/theme.css (enqueued via functions.php).
+ */
+
+/* Honor reduced motion preferences globally */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

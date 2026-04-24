@@ -1,0 +1,27 @@
+<!-- wp:template-part {"slug":"header","tagName":"header"} /-->
+
+<!-- wp:group {"tagName":"main","style":{"spacing":{"padding":{"top":"var:preset|spacing|80","bottom":"var:preset|spacing|80"}},"minHeight":"60vh"},"layout":{"type":"constrained"}} -->
+<main class="wp-block-group" style="min-height:60vh;padding-top:var(--wp--preset--spacing--80);padding-bottom:var(--wp--preset--spacing--80)">
+
+  <!-- wp:group {"align":"wide","layout":{"type":"flex","orientation":"vertical","justifyContent":"center"}} -->
+  <div class="wp-block-group alignwide">
+    <!-- wp:heading {"textAlign":"center","level":1,"style":{"typography":{"fontFamily":"var(--wp--preset--font-family--display)","fontSize":"clamp(6rem, 4rem + 10vw, 14rem)","lineHeight":"0.9","textTransform":"uppercase"}},"gradient":"neon"} -->
+    <h1 class="wp-block-heading has-text-align-center has-neon-gradient-background has-background" style="font-family:var(--wp--preset--font-family--display);font-size:clamp(6rem, 4rem + 10vw, 14rem);line-height:0.9;text-transform:uppercase;background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;color:transparent">404</h1>
+    <!-- /wp:heading -->
+
+    <!-- wp:paragraph {"align":"center","textColor":"muted","style":{"typography":{"fontSize":"1.125rem"}}} -->
+    <p class="has-text-align-center has-muted-color has-text-color" style="font-size:1.125rem">The track you're looking for isn't on this setlist.</p>
+    <!-- /wp:paragraph -->
+
+    <!-- wp:buttons {"layout":{"type":"flex","justifyContent":"center"}} -->
+    <div class="wp-block-buttons">
+      <!-- wp:button --><div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="/">Back to home</a></div><!-- /wp:button -->
+    </div>
+    <!-- /wp:buttons -->
+  </div>
+  <!-- /wp:group -->
+
+</main>
+<!-- /wp:group -->
+
+<!-- wp:template-part {"slug":"footer","tagName":"footer"} /-->

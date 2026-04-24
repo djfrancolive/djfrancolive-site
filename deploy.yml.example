@@ -1,0 +1,56 @@
+# GitHub Actions workflow — SFTP auto-deploy
+#
+# This file lives at the repo root as a *.example* because adding a workflow
+# file requires a PAT with the `workflow` scope (or doing it through the
+# GitHub web UI). To activate:
+#
+#   1. In GitHub: Settings → Personal access tokens → edit your PAT, enable
+#      the `workflow` scope, save. OR just copy/paste the contents below
+#      into a new file at `.github/workflows/deploy.yml` via the GitHub
+#      web UI (which doesn't require the extra scope).
+#
+#   2. Add these secrets in Repo → Settings → Secrets and variables → Actions:
+#        SFTP_HOST          e.g. djfrancolive.com or sftp.yourhost.com
+#        SFTP_USER          SFTP username
+#        SFTP_PASSWORD      SFTP password  (OR use SFTP_KEY for a private key)
+#        SFTP_PORT          optional, defaults to 22
+#        SFTP_REMOTE_PATH   e.g. /home/djfranco/public_html/wp-content/themes/djfranco
+#
+#   3. Rename this file to `.github/workflows/deploy.yml`. Every push to main
+#      will mirror the repo into the theme directory on the server.
+
+name: Deploy to WordPress
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Rsync theme to server
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy via SFTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          protocol: sftp
+          server:    ${{ secrets.SFTP_HOST }}
+          username:  ${{ secrets.SFTP_USER }}
+          password:  ${{ secrets.SFTP_PASSWORD }}
+          port:      ${{ secrets.SFTP_PORT || 22 }}
+          server-dir: ${{ secrets.SFTP_REMOTE_PATH }}/
+          local-dir:  ./
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.github/**
+            **/.vscode/**
+            **/.idea/**
+            **/*.md
+            **/Thumbs.db
+            **/.DS_Store
