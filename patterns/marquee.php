@@ -11,7 +11,7 @@
 <div class="djfranco-marquee" aria-hidden="true">
   <div class="djfranco-marquee__track">
     <?php
-    $items = [ 'Book Now', 'Weddings', 'Clubs', 'Festivals', 'Corporate', 'Private Events', 'Mind Blowing Sets' ];
+    $items = [ 'Book Now', 'Luxury Weddings', 'Brand Activations', 'Private Affairs', 'Open-Format', 'Afrobeats · Amapiano', 'Tampa · Worldwide' ];
     $loop  = array_merge( $items, $items, $items );
     foreach ( $loop as $label ) : ?>
       <span class="djfranco-marquee__item"><?php echo esc_html( $label ); ?></span>

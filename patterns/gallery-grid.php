@@ -3,35 +3,35 @@
  * Title: Gallery Grid
  * Slug: djfranco/gallery-grid
  * Categories: djfranco-section
- * Description: Masonry-style image grid — swap in your press/event photos via the editor.
+ * Description: 12-col masonry gallery with hover labels. Update image URLs via media library.
  */
+$img_base = get_template_directory_uri() . '/assets/img';
+// Fallback to existing site media if theme images are missing.
+$tiles = [
+  [ 'img' => $img_base . '/franco-live-1.jpg',        'span' => 'span-6-2', 'label' => 'Florida Gators Basketball · Gainesville', 'pos' => '' ],
+  [ 'img' => $img_base . '/franco-dj-1.jpg',          'span' => 'span-3-2', 'label' => 'Armature Works · Tampa',         'pos' => '' ],
+  [ 'img' => $img_base . '/franco-clean-2.jpg',       'span' => 'span-3-2', 'label' => 'Studio · Edit session',           'pos' => '' ],
+  [ 'img' => $img_base . '/franco-dj-2.jpg',          'span' => 'span-4-1', 'label' => 'Crowd · peak hour',               'pos' => '' ],
+  [ 'img' => $img_base . '/franco-pro-2.jpg',         'span' => 'span-4-1', 'label' => 'Booth detail',                    'pos' => '' ],
+  [ 'img' => $img_base . '/franco-official-2.jpg',    'span' => 'span-4-1', 'label' => 'Wedding · Oxford Exchange',       'pos' => 'center 20%' ],
+  [ 'img' => $img_base . '/franco-dj-3.jpg',          'span' => 'span-8-2', 'label' => 'Brand activation · Coca-Cola',    'pos' => '' ],
+  [ 'img' => $img_base . '/franco-clean-3.jpg',       'span' => 'span-4-2', 'label' => 'Portrait · 2024',                 'pos' => '' ],
+  [ 'img' => $img_base . '/franco-dj-4.jpg',          'span' => 'span-3-1', 'label' => 'JW Marriott Water Street',        'pos' => '' ],
+  [ 'img' => $img_base . '/franco-pro-3.jpg',         'span' => 'span-3-1', 'label' => 'Mexico · destination set',        'pos' => '' ],
+  [ 'img' => $img_base . '/franco-clean-4.jpg',       'span' => 'span-6-2', 'label' => 'Private affair · Hotel Flor',     'pos' => '' ],
+];
 ?>
-<!-- wp:group {"tagName":"section","align":"full","className":"djfranco-reveal","style":{"spacing":{"padding":{"top":"var:preset|spacing|70","bottom":"var:preset|spacing|70","left":"var:preset|spacing|40","right":"var:preset|spacing|40"}}},"layout":{"type":"constrained","wideSize":"1440px"}} -->
-<section class="wp-block-group alignfull djfranco-reveal" style="padding-top:var(--wp--preset--spacing--70);padding-right:var(--wp--preset--spacing--40);padding-bottom:var(--wp--preset--spacing--70);padding-left:var(--wp--preset--spacing--40)">
-
-  <!-- wp:group {"align":"wide","layout":{"type":"flex","justifyContent":"space-between","flexWrap":"wrap","verticalAlignment":"bottom"}} -->
-  <div class="wp-block-group alignwide">
-    <!-- wp:group -->
-    <div class="wp-block-group">
-      <!-- wp:paragraph {"className":"djfranco-eyebrow","style":{"typography":{"fontFamily":"var(--wp--preset--font-family--mono)","fontSize":"0.8rem","letterSpacing":"0.3em","textTransform":"uppercase"}},"textColor":"accent"} --><p class="djfranco-eyebrow has-accent-color has-text-color" style="font-family:var(--wp--preset--font-family--mono);font-size:0.8rem;letter-spacing:0.3em;text-transform:uppercase">— Gallery</p><!-- /wp:paragraph -->
-      <!-- wp:heading {"level":2,"style":{"typography":{"fontFamily":"var(--wp--preset--font-family--display)","fontSize":"var(--wp--preset--font-size--3xl)","textTransform":"uppercase","lineHeight":"0.95","fontWeight":"400"}}} --><h2 class="wp-block-heading" style="font-family:var(--wp--preset--font-family--display);font-size:var(--wp--preset--font-size--3xl);font-weight:400;line-height:0.95;text-transform:uppercase">Nights on the decks</h2><!-- /wp:heading -->
+<!-- wp:html -->
+<section class="djf-section djfranco-reveal" style="padding-top:1rem;">
+  <div class="djf-container djf-container--wide">
+    <div class="djf-gallery">
+      <?php foreach ( $tiles as $t ) :
+        $style = "background-image:url('" . esc_url( $t['img'] ) . "')";
+        if ( ! empty( $t['pos'] ) ) $style .= "; background-position:" . esc_attr( $t['pos'] );
+      ?>
+        <div class="djf-gallery__item <?php echo esc_attr( $t['span'] ); ?>" style="<?php echo $style; ?>" data-label="<?php echo esc_attr( $t['label'] ); ?>"></div>
+      <?php endforeach; ?>
     </div>
-    <!-- /wp:group -->
   </div>
-  <!-- /wp:group -->
-
-  <!-- wp:spacer {"height":"var:preset|spacing|40"} /-->
-
-  <!-- wp:gallery {"align":"wide","columns":3,"linkTo":"none","imageCrop":true,"style":{"spacing":{"blockGap":{"top":"var:preset|spacing|20","left":"var:preset|spacing|20"}}}} -->
-  <figure class="wp-block-gallery alignwide has-nested-images columns-3 is-cropped">
-    <!-- wp:image --><figure class="wp-block-image"><img src="https://djfrancolive.com/wp-content/uploads/2023/04/DJFrancoLogo.png" alt="Set photo"/></figure><!-- /wp:image -->
-    <!-- wp:image --><figure class="wp-block-image"><img src="https://djfrancolive.com/wp-content/uploads/2023/04/DJFrancoLogo.png" alt="Set photo"/></figure><!-- /wp:image -->
-    <!-- wp:image --><figure class="wp-block-image"><img src="https://djfrancolive.com/wp-content/uploads/2023/04/DJFrancoLogo.png" alt="Set photo"/></figure><!-- /wp:image -->
-    <!-- wp:image --><figure class="wp-block-image"><img src="https://djfrancolive.com/wp-content/uploads/2023/04/DJFrancoLogo.png" alt="Set photo"/></figure><!-- /wp:image -->
-    <!-- wp:image --><figure class="wp-block-image"><img src="https://djfrancolive.com/wp-content/uploads/2023/04/DJFrancoLogo.png" alt="Set photo"/></figure><!-- /wp:image -->
-    <!-- wp:image --><figure class="wp-block-image"><img src="https://djfrancolive.com/wp-content/uploads/2023/04/DJFrancoLogo.png" alt="Set photo"/></figure><!-- /wp:image -->
-  </figure>
-  <!-- /wp:gallery -->
-
 </section>
-<!-- /wp:group -->
+<!-- /wp:html -->
