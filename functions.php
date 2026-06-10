@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DJFRANCO_VERSION', '1.0.5' );
+define( 'DJFRANCO_VERSION', '1.0.6' );
 define( 'DJFRANCO_DIR', get_stylesheet_directory() );
 define( 'DJFRANCO_URI', get_stylesheet_directory_uri() );
 
@@ -639,7 +639,7 @@ function djfranco_gallery_meta_box( $post ) {
 		<label style="display:block;font-weight:600;margin-bottom:4px;">Media URL (image or video)</label>
 		<input type="url" id="djfranco_media_url" name="djfranco_media_url" value="<?php echo esc_attr( $url ); ?>" style="width:calc(100% - 220px); margin-right: 8px;" placeholder="https://djfrancolive.com/wp-content/uploads/…/photo.jpg" />
 		<button type="button" class="button" id="djfranco_pick_media">Choose from Media Library</button>
-		<br><span class="description">Images (.jpg/.png/.webp) → still tile. Videos (.mp4/.webm/.mov) → silent autoplay loop.</span>
+		<br><span class="description">Images (.jpg/.png/.webp) → still tile. Videos (.mp4/.webm/.mov) → silent autoplay loop. YouTube URL (youtu.be/ID) → embedded player.</span>
 	</p>
 	<p style="display:flex; gap: 1rem;">
 		<span style="flex: 2;">
@@ -696,14 +696,18 @@ function djfranco_get_gallery() {
 	foreach ( $q->posts as $p ) {
 		$url = get_post_meta( $p->ID, 'djfranco_media_url', true );
 		if ( ! $url ) continue;
-		$ext = strtolower( pathinfo( wp_parse_url( $url, PHP_URL_PATH ), PATHINFO_EXTENSION ) );
+		$yt_embed = djfranco_youtube_embed_url( $url );
+		$ext      = strtolower( pathinfo( wp_parse_url( $url, PHP_URL_PATH ), PATHINFO_EXTENSION ) );
 		$is_video = in_array( $ext, [ 'mp4', 'webm', 'mov', 'm4v' ], true );
+		$is_yt    = (bool) $yt_embed;
 		$out[] = [
-			'title'    => get_the_title( $p ),
-			'url'      => $url,
-			'span'     => get_post_meta( $p->ID, 'djfranco_span',  true ) ?: 'span-4-2',
-			'pos'      => get_post_meta( $p->ID, 'djfranco_bg_pos', true ),
-			'is_video' => $is_video,
+			'title'      => get_the_title( $p ),
+			'url'        => $url,
+			'span'       => get_post_meta( $p->ID, 'djfranco_span',  true ) ?: 'span-4-2',
+			'pos'        => get_post_meta( $p->ID, 'djfranco_bg_pos', true ),
+			'is_video'   => $is_video,
+			'is_youtube' => $is_yt,
+			'embed'      => $yt_embed,
 		];
 	}
 	return $out;

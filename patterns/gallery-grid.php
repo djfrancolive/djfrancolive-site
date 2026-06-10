@@ -17,7 +17,17 @@ $tiles = function_exists( 'djfranco_get_gallery' ) ? djfranco_get_gallery() : []
         <?php foreach ( $tiles as $t ) :
           $span_class = esc_attr( $t['span'] );
           $label      = esc_attr( $t['title'] );
-          if ( $t['is_video'] ) : ?>
+          if ( ! empty( $t['is_youtube'] ) ) : ?>
+            <div class="djf-gallery__item djf-gallery__item--video djf-gallery__item--youtube <?php echo $span_class; ?>" data-label="<?php echo $label; ?>">
+              <iframe
+                src="<?php echo esc_url( $t['embed'] ); ?>?rel=0&modestbranding=1&playsinline=1"
+                title="<?php echo $label; ?>"
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+                referrerpolicy="strict-origin-when-cross-origin"></iframe>
+            </div>
+          <?php elseif ( $t['is_video'] ) : ?>
             <div class="djf-gallery__item djf-gallery__item--video <?php echo $span_class; ?>" data-label="<?php echo $label; ?>">
               <video src="<?php echo esc_url( $t['url'] ); ?>" autoplay muted loop playsinline preload="metadata"></video>
             </div>
