@@ -409,17 +409,27 @@ body {
   opacity: .35;
   pointer-events: none;
 }
-.djf-mix-card__art .djf-waveform { pointer-events: none; }
 .djf-mix-card__art .djf-waveform {
   position: absolute; inset: auto 0 0 0;
   height: 60%; display: flex; align-items: flex-end;
   padding: 0 1.5rem 1.2rem; gap: 3px;
+  cursor: pointer;
+  touch-action: none;
+  z-index: 1;
 }
 .djf-mix-card__art .djf-waveform i {
   display: block; width: 3px;
-  background: linear-gradient(180deg, var(--contrast), var(--accent));
-  border-radius: 2px; opacity: .85;
+  background: var(--contrast);
+  border-radius: 2px; opacity: .25;
+  transition: opacity .12s ease, background .12s ease;
+  pointer-events: none;
 }
+.djf-mix-card__art .djf-waveform i.is-played {
+  background: var(--accent);
+  opacity: 1;
+}
+.djf-mix-card__art .djf-waveform:hover i { opacity: .45; }
+.djf-mix-card__art .djf-waveform:hover i.is-played { opacity: 1; }
 .djf-mix-card__play {
   position: absolute; top: 1rem; right: 1rem;
   width: 48px; height: 48px; border-radius: 50%;

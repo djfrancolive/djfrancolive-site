@@ -152,6 +152,52 @@
     });
   }
 
+  // ---------- Waveform scrubbing ----------
+  // Click anywhere on the bars to seek; drag to scrub; bars fill orange
+  // as the track plays so you can see where you are.
+  function initMixScrubbing() {
+    document.querySelectorAll('.djf-mix-card').forEach(function (card) {
+      var wave  = card.querySelector('.djf-waveform');
+      var audio = card.querySelector('.djf-mix-card__audio');
+      if (!wave || !audio) return;
+      var bars = wave.querySelectorAll('i');
+      if (!bars.length) return;
+
+      function seekFromX(clientX) {
+        var rect = wave.getBoundingClientRect();
+        var pct  = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+        if (audio.duration && isFinite(audio.duration)) {
+          audio.currentTime = pct * audio.duration;
+          paintProgress(pct);
+        }
+      }
+      function paintProgress(pct) {
+        var threshold = Math.floor(pct * bars.length);
+        for (var i = 0; i < bars.length; i++) {
+          bars[i].classList.toggle('is-played', i < threshold);
+        }
+      }
+      function evX(e) { return e.touches ? e.touches[0].clientX : e.clientX; }
+
+      var dragging = false;
+      wave.addEventListener('mousedown', function (e) { dragging = true; seekFromX(evX(e)); });
+      document.addEventListener('mousemove', function (e) { if (dragging) seekFromX(evX(e)); });
+      document.addEventListener('mouseup', function () { dragging = false; });
+      wave.addEventListener('touchstart', function (e) { seekFromX(evX(e)); }, { passive: true });
+      wave.addEventListener('touchmove',  function (e) { seekFromX(evX(e)); }, { passive: true });
+
+      audio.addEventListener('timeupdate', function () {
+        if (audio.duration && isFinite(audio.duration)) {
+          paintProgress(audio.currentTime / audio.duration);
+        }
+      });
+      audio.addEventListener('ended', function () {
+        card.classList.remove('is-playing');
+        paintProgress(0);
+      });
+    });
+  }
+
   // ---------- Boot ----------
   function boot() {
     initReveal();
@@ -160,6 +206,7 @@
     initMarquee();
     initMixGrids();
     initMixPlayback();
+    initMixScrubbing();
   }
 
   if (document.readyState === 'loading') {
