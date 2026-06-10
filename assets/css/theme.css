@@ -665,6 +665,28 @@ body {
   transition: transform .25s var(--ease), border-color .25s var(--ease);
 }
 .djf-epk-card:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); }
+/* Featured EPK card — first slot, sunset border + lift */
+.djf-epk-card--featured {
+  position: relative;
+  background: linear-gradient(180deg, rgba(26,26,32,.9), rgba(10,10,11,1));
+  border: 1px solid transparent;
+}
+.djf-epk-card--featured::before {
+  content: ""; position: absolute; inset: -1px;
+  border-radius: var(--r-md); padding: 1px;
+  background: var(--grad-sunset);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  pointer-events: none;
+}
+.djf-epk-card--featured::after {
+  content: "EPK"; position: absolute; top: -10px; left: 1rem;
+  background: var(--grad-sunset); color: var(--base);
+  padding: .3rem .6rem; border-radius: var(--r-pill);
+  font-family: var(--ff-mono); font-size: .65rem;
+  letter-spacing: .22em; text-transform: uppercase; font-weight: 600;
+}
+.djf-epk-card--featured .djf-dl { color: var(--accent); }
 .djf-epk-card__ext {
   font-family: var(--ff-mono); font-size: .68rem; letter-spacing: .2em;
   color: var(--accent); text-transform: uppercase;

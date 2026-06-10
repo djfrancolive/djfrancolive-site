@@ -430,6 +430,112 @@ add_action( 'save_post_djf_mix', function ( $post_id ) {
 	}
 } );
 
+/* ============================================================
+ * Custom Post Type: Kit File (EPK downloads)
+ * ----------------------------------------------------------------
+ * Each kit file is a post under wp-admin → Kit Files. Fields:
+ *   - Title              (e.g. "Full EPK", "Press Portrait 01")
+ *   - Excerpt            short description shown under the title
+ *   - File URL           media library pick (PDF, PNG, ZIP, …)
+ *   - File type label    e.g. ".pdf · 12 pages"
+ *   - File size          e.g. "3.4 MB"
+ *   - Order              the EPK lives at #1 via menu_order=1
+ * ============================================================ */
+add_action( 'init', function () {
+	register_post_type( 'djf_kit', [
+		'labels' => [
+			'name'          => __( 'Kit Files', 'djfranco' ),
+			'singular_name' => __( 'Kit File', 'djfranco' ),
+			'add_new_item'  => __( 'Add Kit File', 'djfranco' ),
+			'edit_item'     => __( 'Edit Kit File', 'djfranco' ),
+			'menu_name'     => __( 'Kit Files', 'djfranco' ),
+			'not_found'     => __( 'No kit files yet — add your EPK first.', 'djfranco' ),
+		],
+		'public'        => false,
+		'show_ui'       => true,
+		'show_in_rest'  => true,
+		'menu_position' => 6,
+		'menu_icon'     => 'dashicons-download',
+		'supports'      => [ 'title', 'excerpt', 'page-attributes' ],
+	] );
+} );
+
+add_action( 'add_meta_boxes', function () {
+	add_meta_box( 'djf_kit_details', __( 'Kit File Details', 'djfranco' ), 'djfranco_kit_meta_box', 'djf_kit', 'normal', 'high' );
+} );
+
+function djfranco_kit_meta_box( $post ) {
+	wp_nonce_field( 'djfranco_kit_save', 'djfranco_kit_nonce' );
+	$url   = get_post_meta( $post->ID, 'djfranco_file_url',  true );
+	$label = get_post_meta( $post->ID, 'djfranco_file_label', true );
+	$size  = get_post_meta( $post->ID, 'djfranco_file_size', true );
+	?>
+	<p>
+		<label style="display:block;font-weight:600;margin-bottom:4px;">File URL</label>
+		<input type="url" id="djfranco_file_url" name="djfranco_file_url" value="<?php echo esc_attr( $url ); ?>" style="width:calc(100% - 200px); margin-right: 8px;" placeholder="https://djfrancolive.com/wp-content/uploads/…/your-epk.pdf" />
+		<button type="button" class="button" id="djfranco_pick_file">Choose from Media Library</button>
+		<br><span class="description">Upload your EPK PDF via Media Library, then pick it here.</span>
+	</p>
+	<p style="display:flex;gap:1rem;">
+		<span style="flex:1;">
+			<label style="display:block;font-weight:600;margin-bottom:4px;">Type label</label>
+			<input type="text" name="djfranco_file_label" value="<?php echo esc_attr( $label ); ?>" style="width:100%;" placeholder=".pdf · 12 pages" />
+		</span>
+		<span style="flex:1;">
+			<label style="display:block;font-weight:600;margin-bottom:4px;">File size</label>
+			<input type="text" name="djfranco_file_size" value="<?php echo esc_attr( $size ); ?>" style="width:100%;" placeholder="3.4 MB" />
+		</span>
+	</p>
+	<script>
+	(function(){
+		var btn = document.getElementById('djfranco_pick_file');
+		var input = document.getElementById('djfranco_file_url');
+		if (!btn || !input || typeof wp === 'undefined' || !wp.media) return;
+		btn.addEventListener('click', function(e){
+			e.preventDefault();
+			var frame = wp.media({ title: 'Choose kit file', button: { text: 'Use this file' }, multiple: false });
+			frame.on('select', function(){
+				var att = frame.state().get('selection').first().toJSON();
+				input.value = att.url;
+			});
+			frame.open();
+		});
+	})();
+	</script>
+	<?php
+}
+
+add_action( 'save_post_djf_kit', function ( $post_id ) {
+	if ( ! isset( $_POST['djfranco_kit_nonce'] ) || ! wp_verify_nonce( $_POST['djfranco_kit_nonce'], 'djfranco_kit_save' ) ) return;
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
+	if ( ! current_user_can( 'edit_post', $post_id ) ) return;
+	foreach ( [ 'djfranco_file_url', 'djfranco_file_label', 'djfranco_file_size' ] as $key ) {
+		if ( isset( $_POST[ $key ] ) ) {
+			update_post_meta( $post_id, $key, sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) );
+		}
+	}
+} );
+
+function djfranco_get_kit_files() {
+	$q = new WP_Query( [
+		'post_type'      => 'djf_kit',
+		'post_status'    => 'publish',
+		'orderby'        => [ 'menu_order' => 'ASC', 'date' => 'DESC' ],
+		'posts_per_page' => -1,
+	] );
+	$out = [];
+	foreach ( $q->posts as $p ) {
+		$out[] = [
+			'title' => get_the_title( $p ),
+			'sub'   => $p->post_excerpt,
+			'url'   => get_post_meta( $p->ID, 'djfranco_file_url',  true ),
+			'label' => get_post_meta( $p->ID, 'djfranco_file_label', true ),
+			'size'  => get_post_meta( $p->ID, 'djfranco_file_size', true ),
+		];
+	}
+	return $out;
+}
+
 /**
  * Helper used by the mix-grid pattern.
  * Returns an array of mix data shaped like the old JS array.
@@ -540,6 +646,33 @@ function djfranco_bootstrap_pages() {
 		}
 	}
 
+	// Seed Kit Files — EPK at position #1 if none exist yet.
+	$existing_kits = get_posts( [ 'post_type' => 'djf_kit', 'posts_per_page' => 1, 'fields' => 'ids' ] );
+	if ( empty( $existing_kits ) ) {
+		$kits = [
+			[ 'title' => 'Full EPK',          'sub' => 'Bio, photos, press, technical rider — everything in one PDF.', 'label' => '.pdf',     'size' => '' ],
+			[ 'title' => 'Press Portrait 01', 'sub' => 'Booth shot, vertical, color graded.',                          'label' => '.png',     'size' => '' ],
+			[ 'title' => 'Press Portrait 02', 'sub' => 'Stage-side, horizontal, low-light.',                           'label' => '.png',     'size' => '' ],
+			[ 'title' => 'Logo Pack',         'sub' => 'Full mark, monogram, wordmark. Light & dark.',                  'label' => '.svg + .png', 'size' => '' ],
+			[ 'title' => 'Technical Rider',   'sub' => 'PA, mics, power, booth specs.',                                 'label' => '.pdf',     'size' => '' ],
+			[ 'title' => 'Bios (EN / ES)',    'sub' => '50, 150, and 300-word versions.',                               'label' => '.txt',     'size' => '' ],
+		];
+		$order = 1;
+		foreach ( $kits as $k ) {
+			$kid = wp_insert_post( [
+				'post_type'    => 'djf_kit',
+				'post_status'  => 'publish',
+				'post_title'   => $k['title'],
+				'post_excerpt' => $k['sub'],
+				'menu_order'   => $order++,
+			] );
+			if ( $kid && ! is_wp_error( $kid ) ) {
+				update_post_meta( $kid, 'djfranco_file_label', $k['label'] );
+				update_post_meta( $kid, 'djfranco_file_size',  $k['size'] );
+			}
+		}
+	}
+
 	// Seed initial mixes from djfrancolive.com if none exist yet.
 	$existing_mixes = get_posts( [ 'post_type' => 'djf_mix', 'posts_per_page' => 1, 'fields' => 'ids' ] );
 	if ( empty( $existing_mixes ) ) {
@@ -606,9 +739,9 @@ function djfranco_bootstrap_pages() {
  * deployed onto an already-active theme (e.g. SFTP push). Runs once.
  */
 add_action( 'init', function () {
-	if ( get_option( 'djfranco_bootstrapped' ) === DJFRANCO_VERSION . '.3' ) {
+	if ( get_option( 'djfranco_bootstrapped' ) === DJFRANCO_VERSION . '.4' ) {
 		return;
 	}
 	djfranco_bootstrap_pages();
-	update_option( 'djfranco_bootstrapped', DJFRANCO_VERSION . '.3' );
+	update_option( 'djfranco_bootstrapped', DJFRANCO_VERSION . '.4' );
 }, 99 );
