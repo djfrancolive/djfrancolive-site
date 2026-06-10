@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DJFRANCO_VERSION', '1.0.4' );
+define( 'DJFRANCO_VERSION', '1.0.5' );
 define( 'DJFRANCO_DIR', get_stylesheet_directory() );
 define( 'DJFRANCO_URI', get_stylesheet_directory_uri() );
 
@@ -159,6 +159,41 @@ add_action( 'wp_body_open', function () {
  * ============================================================ */
 
 add_action( 'customize_register', function ( $wp_customize ) {
+	// --- Featured video (home page, after the mixes section) ---
+	$wp_customize->add_section( 'djfranco_video', [
+		'title'    => __( 'Featured Video', 'djfranco' ),
+		'priority' => 190,
+	] );
+	$wp_customize->add_setting( 'djfranco_featured_video_url', [
+		'default'           => 'https://youtu.be/uCOR0RqwC7s',
+		'sanitize_callback' => 'esc_url_raw',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( 'djfranco_featured_video_url', [
+		'label'       => __( 'YouTube video URL', 'djfranco' ),
+		'description' => __( 'Plays on the home page between the Mixes and Booking sections. Any youtu.be/, youtube.com/watch?v=, or shorts URL works. Leave blank to hide the section.', 'djfranco' ),
+		'section'     => 'djfranco_video',
+		'type'        => 'url',
+	] );
+	$wp_customize->add_setting( 'djfranco_featured_video_title', [
+		'default'           => 'Live cut.',
+		'sanitize_callback' => 'sanitize_text_field',
+	] );
+	$wp_customize->add_control( 'djfranco_featured_video_title', [
+		'label'   => __( 'Section title', 'djfranco' ),
+		'section' => 'djfranco_video',
+		'type'    => 'text',
+	] );
+	$wp_customize->add_setting( 'djfranco_featured_video_eyebrow', [
+		'default'           => 'Watch',
+		'sanitize_callback' => 'sanitize_text_field',
+	] );
+	$wp_customize->add_control( 'djfranco_featured_video_eyebrow', [
+		'label'   => __( 'Eyebrow', 'djfranco' ),
+		'section' => 'djfranco_video',
+		'type'    => 'text',
+	] );
+
 	$wp_customize->add_section( 'djfranco_analytics', [
 		'title'    => __( 'Analytics', 'djfranco' ),
 		'priority' => 200,
@@ -184,6 +219,22 @@ add_action( 'customize_register', function ( $wp_customize ) {
 		'type'        => 'checkbox',
 	] );
 } );
+
+/**
+ * Convert any YouTube URL into a clean privacy-friendly embed URL.
+ * Accepts: youtu.be/ID, youtube.com/watch?v=ID, /shorts/ID, /embed/ID, /live/ID
+ * Returns: https://www.youtube-nocookie.com/embed/ID  (or '' if unparseable)
+ */
+function djfranco_youtube_embed_url( $url ) {
+	$url = trim( (string) $url );
+	if ( ! $url ) return '';
+	$id = '';
+	if ( preg_match( '~(?:youtu\.be/|youtube\.com/(?:watch\?v=|embed/|shorts/|live/))([A-Za-z0-9_-]{6,})~', $url, $m ) ) {
+		$id = $m[1];
+	}
+	if ( ! $id ) return '';
+	return 'https://www.youtube-nocookie.com/embed/' . $id;
+}
 
 function djfranco_ga4_id() {
 	$id = trim( (string) get_theme_mod( 'djfranco_ga4_id', '' ) );
