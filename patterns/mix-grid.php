@@ -35,12 +35,11 @@ $show_all = ! $is_home;
             ? 'background-image:url(' . esc_url( $m['thumb'] ) . '); background-size:cover; background-position:center;'
             : '';
         ?>
-        <article class="djf-mix-card">
+        <article class="djf-mix-card" data-djf-mix-id="<?php echo esc_attr( $m['id'] ); ?>">
           <div class="djf-mix-card__art" style="<?php echo $art_style; ?>">
             <?php if ( ! $m['thumb'] ) : ?>
               <div class="djf-waveform" aria-hidden="true">
                 <?php
-                // Tiny deterministic pseudo-waveform per card.
                 $seed = ( $i + 3 ) * 9301 + 49297;
                 for ( $b = 0; $b < 60; $b++ ) {
                   $seed = ( $seed * 9301 + 49297 ) % 233280;
@@ -50,7 +49,11 @@ $show_all = ! $is_home;
                 ?>
               </div>
             <?php endif; ?>
-            <a href="<?php echo esc_url( $m['url'] ); ?>" target="_blank" rel="noopener" class="djf-mix-card__play" aria-label="Play <?php echo esc_attr( $m['title'] ); ?>">▶</a>
+            <?php if ( ! empty( $m['audio'] ) ) : ?>
+              <button type="button" class="djf-mix-card__play" data-djf-play="<?php echo esc_url( $m['audio'] ); ?>" aria-label="Play <?php echo esc_attr( $m['title'] ); ?>">▶</button>
+            <?php else : ?>
+              <a href="<?php echo esc_url( $m['url'] ); ?>" target="_blank" rel="noopener" class="djf-mix-card__play" aria-label="Open <?php echo esc_attr( $m['title'] ); ?>">▶</a>
+            <?php endif; ?>
             <span class="djf-mix-card__num"><?php echo esc_html( $m['n'] ); ?></span>
           </div>
           <div class="djf-mix-card__body">
@@ -63,10 +66,17 @@ $show_all = ! $is_home;
               <?php endif; ?>
             </div>
             <h3 class="djf-mix-card__title">
-              <a href="<?php echo esc_url( $m['url'] ); ?>" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;"><?php echo esc_html( $m['title'] ); ?></a>
+              <?php if ( ! empty( $m['audio'] ) ) : ?>
+                <?php echo esc_html( $m['title'] ); ?>
+              <?php else : ?>
+                <a href="<?php echo esc_url( $m['url'] ); ?>" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;"><?php echo esc_html( $m['title'] ); ?></a>
+              <?php endif; ?>
             </h3>
             <?php if ( $m['sub'] ) : ?>
               <p class="djf-mix-card__sub"><?php echo esc_html( $m['sub'] ); ?></p>
+            <?php endif; ?>
+            <?php if ( ! empty( $m['audio'] ) ) : ?>
+              <audio class="djf-mix-card__audio" preload="none" controls src="<?php echo esc_url( $m['audio'] ); ?>"></audio>
             <?php endif; ?>
           </div>
           <div class="djf-mix-card__footer">

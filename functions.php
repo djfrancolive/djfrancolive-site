@@ -362,20 +362,27 @@ add_action( 'add_meta_boxes', function () {
 
 function djfranco_mix_meta_box( $post ) {
 	wp_nonce_field( 'djfranco_mix_save', 'djfranco_mix_nonce' );
+	$audio = get_post_meta( $post->ID, 'djfranco_audio_url',      true );
 	$sc    = get_post_meta( $post->ID, 'djfranco_soundcloud_url', true );
 	$alt   = get_post_meta( $post->ID, 'djfranco_alt_url',        true );
 	$len   = get_post_meta( $post->ID, 'djfranco_length',         true );
 	$plays = get_post_meta( $post->ID, 'djfranco_plays',          true );
+	$media_url = admin_url( 'upload.php?mode=list&attachment-filter=post_mime_type:audio' );
 	?>
 	<p>
-		<label style="display:block;font-weight:600;margin-bottom:4px;">SoundCloud URL</label>
+		<label style="display:block;font-weight:600;margin-bottom:4px;">Audio file URL (.mp3, .m4a, .wav)</label>
+		<input type="url" name="djfranco_audio_url" id="djfranco_audio_url" value="<?php echo esc_attr( $audio ); ?>" style="width:calc(100% - 200px); margin-right: 8px;" placeholder="https://djfrancolive.com/wp-content/uploads/.../your-mix.mp3" />
+		<button type="button" class="button" id="djfranco_pick_audio">Choose from Media Library</button>
+		<br><span class="description">If set, the card's play button plays inline. Find your existing audio at <a href="<?php echo esc_url( $media_url ); ?>" target="_blank">Media Library → Audio</a>.</span>
+	</p>
+	<p>
+		<label style="display:block;font-weight:600;margin-bottom:4px;">SoundCloud URL (optional fallback)</label>
 		<input type="url" name="djfranco_soundcloud_url" value="<?php echo esc_attr( $sc ); ?>" style="width:100%;" placeholder="https://soundcloud.com/djfrancolive/your-mix" />
-		<span class="description">Paste the full SoundCloud track URL. Click on the card opens this.</span>
+		<span class="description">Used only when the audio file URL above is empty.</span>
 	</p>
 	<p>
 		<label style="display:block;font-weight:600;margin-bottom:4px;">Alternate URL (optional)</label>
 		<input type="url" name="djfranco_alt_url" value="<?php echo esc_attr( $alt ); ?>" style="width:100%;" placeholder="https://www.mixcloud.com/... or Spotify, YouTube, etc." />
-		<span class="description">Used if you'd rather host on Mixcloud / Spotify / YouTube.</span>
 	</p>
 	<p style="display:flex;gap:1rem;">
 		<span style="flex:1;">
@@ -387,6 +394,22 @@ function djfranco_mix_meta_box( $post ) {
 			<input type="text" name="djfranco_plays" value="<?php echo esc_attr( $plays ); ?>" style="width:100%;" placeholder="12.4k plays" />
 		</span>
 	</p>
+	<script>
+	(function(){
+		var btn = document.getElementById('djfranco_pick_audio');
+		var input = document.getElementById('djfranco_audio_url');
+		if (!btn || !input || typeof wp === 'undefined' || !wp.media) return;
+		btn.addEventListener('click', function(e){
+			e.preventDefault();
+			var frame = wp.media({ title: 'Choose mix audio', library: { type: 'audio' }, button: { text: 'Use this audio' }, multiple: false });
+			frame.on('select', function(){
+				var att = frame.state().get('selection').first().toJSON();
+				input.value = att.url;
+			});
+			frame.open();
+		});
+	})();
+	</script>
 	<?php
 }
 
@@ -400,7 +423,7 @@ add_action( 'save_post_djf_mix', function ( $post_id ) {
 	if ( ! current_user_can( 'edit_post', $post_id ) ) {
 		return;
 	}
-	foreach ( [ 'djfranco_soundcloud_url', 'djfranco_alt_url', 'djfranco_length', 'djfranco_plays' ] as $key ) {
+	foreach ( [ 'djfranco_audio_url', 'djfranco_soundcloud_url', 'djfranco_alt_url', 'djfranco_length', 'djfranco_plays' ] as $key ) {
 		if ( isset( $_POST[ $key ] ) ) {
 			update_post_meta( $post_id, $key, sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) );
 		}
@@ -423,19 +446,21 @@ function djfranco_get_mixes( $limit = null ) {
 	$out = [];
 	$i = 1;
 	foreach ( $q->posts as $p ) {
-		$url = get_post_meta( $p->ID, 'djfranco_soundcloud_url', true );
-		$alt = get_post_meta( $p->ID, 'djfranco_alt_url',        true );
+		$audio = get_post_meta( $p->ID, 'djfranco_audio_url',      true );
+		$sc    = get_post_meta( $p->ID, 'djfranco_soundcloud_url', true );
+		$alt   = get_post_meta( $p->ID, 'djfranco_alt_url',        true );
 		$out[] = [
 			'id'      => $p->ID,
-			'n'      => str_pad( (string) $i, 3, '0', STR_PAD_LEFT ),
-			'title'  => get_the_title( $p ),
-			'sub'    => $p->post_excerpt ?: wp_trim_words( wp_strip_all_tags( $p->post_content ), 18 ),
-			'url'    => $url ?: $alt ?: '#',
-			'source' => $url ? 'SoundCloud' : ( $alt ? 'Listen' : '' ),
-			'length' => get_post_meta( $p->ID, 'djfranco_length', true ),
-			'plays'  => get_post_meta( $p->ID, 'djfranco_plays', true ),
-			'date'   => get_the_date( 'M Y', $p ),
-			'thumb'  => get_the_post_thumbnail_url( $p, 'large' ),
+			'n'       => str_pad( (string) $i, 3, '0', STR_PAD_LEFT ),
+			'title'   => get_the_title( $p ),
+			'sub'     => $p->post_excerpt ?: wp_trim_words( wp_strip_all_tags( $p->post_content ), 18 ),
+			'audio'   => $audio,
+			'url'     => $sc ?: $alt ?: '#',
+			'source'  => $audio ? 'Listen now' : ( $sc ? 'SoundCloud' : ( $alt ? 'Listen' : '' ) ),
+			'length'  => get_post_meta( $p->ID, 'djfranco_length', true ),
+			'plays'   => get_post_meta( $p->ID, 'djfranco_plays', true ),
+			'date'    => get_the_date( 'M Y', $p ),
+			'thumb'   => get_the_post_thumbnail_url( $p, 'large' ),
 		];
 		$i++;
 	}

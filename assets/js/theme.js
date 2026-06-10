@@ -122,10 +122,33 @@
   }
 
   function initMixGrids() {
+    // Server-rendered grids (mix-grid.php) keep their existing HTML; legacy
+    // empty grids fall back to the hardcoded MIXES_HOME / MIXES_ALL data.
     document.querySelectorAll('[data-djf-mix-grid]').forEach(function (grid) {
+      if (grid.children.length > 0) return;
       var mode = grid.getAttribute('data-djf-mix-grid');
       var list = (mode === 'home') ? MIXES_HOME : MIXES_ALL;
       grid.innerHTML = list.map(mixCard).join('');
+    });
+  }
+
+  // ---------- Inline audio playback for mix cards ----------
+  function initMixPlayback() {
+    var current = null;
+    document.querySelectorAll('.djf-mix-card__play[data-djf-play]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        var card  = btn.closest('.djf-mix-card');
+        var audio = card && card.querySelector('.djf-mix-card__audio');
+        if (!audio) return;
+        if (current && current !== audio) {
+          current.pause();
+          var prev = current.closest('.djf-mix-card');
+          if (prev) prev.classList.remove('is-playing');
+        }
+        if (audio.paused) { audio.play(); card.classList.add('is-playing'); current = audio; }
+        else              { audio.pause(); card.classList.remove('is-playing'); }
+      });
     });
   }
 
@@ -136,6 +159,7 @@
     initMarqueeContent();
     initMarquee();
     initMixGrids();
+    initMixPlayback();
   }
 
   if (document.readyState === 'loading') {

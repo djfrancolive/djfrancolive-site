@@ -457,6 +457,21 @@ body {
   margin-top: auto;
 }
 .djf-mix-card__footer .djf-plays { color: var(--contrast); }
+.djf-mix-card__audio {
+  width: 100%;
+  margin-top: 1rem;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  filter: invert(0.85) hue-rotate(180deg);
+}
+.djf-mix-card.is-playing .djf-mix-card__play {
+  background: var(--accent); color: var(--base);
+}
+.djf-mix-card.is-playing .djf-mix-card__play::before {
+  content: "❚❚"; font-size: .85em;
+}
+.djf-mix-card.is-playing .djf-mix-card__play { font-size: 0; }
+.djf-mix-card.is-playing .djf-mix-card__play::before { font-size: 1rem; display: block; }
 
 /* ====================================================================
    PACKAGES
