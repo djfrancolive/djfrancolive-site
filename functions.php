@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DJFRANCO_VERSION', '1.0.6' );
+define( 'DJFRANCO_VERSION', '1.0.7' );
 define( 'DJFRANCO_DIR', get_stylesheet_directory() );
 define( 'DJFRANCO_URI', get_stylesheet_directory_uri() );
 
@@ -159,6 +159,35 @@ add_action( 'wp_body_open', function () {
  * ============================================================ */
 
 add_action( 'customize_register', function ( $wp_customize ) {
+	// --- Business / SEO info (powers JSON-LD schema for Google) ---
+	$wp_customize->add_section( 'djfranco_business', [
+		'title'    => __( 'Business Info (SEO)', 'djfranco' ),
+		'priority' => 180,
+	] );
+	$fields = [
+		'djfranco_biz_phone'      => [ 'label' => 'Phone',                  'default' => '+1-561-294-3587', 'type' => 'text' ],
+		'djfranco_biz_email'      => [ 'label' => 'Email',                  'default' => 'bookings@djfrancolive.com', 'type' => 'email' ],
+		'djfranco_biz_city'       => [ 'label' => 'City',                   'default' => 'Tampa', 'type' => 'text' ],
+		'djfranco_biz_region'     => [ 'label' => 'State',                  'default' => 'FL', 'type' => 'text' ],
+		'djfranco_biz_country'    => [ 'label' => 'Country (ISO 2-letter)', 'default' => 'US', 'type' => 'text' ],
+		'djfranco_biz_founded'    => [ 'label' => 'Founded (year)',         'default' => '2016', 'type' => 'text' ],
+		'djfranco_biz_genres'     => [ 'label' => 'Genres (comma-separated)','default' => 'Open Format, Afrobeats, Amapiano, Hip-Hop, R&B', 'type' => 'text' ],
+		'djfranco_biz_area'       => [ 'label' => 'Service area',           'default' => 'Tampa Bay, Florida, Worldwide', 'type' => 'text' ],
+		'djfranco_biz_instagram'  => [ 'label' => 'Instagram URL',          'default' => 'https://www.instagram.com/francois561/', 'type' => 'url' ],
+		'djfranco_biz_facebook'   => [ 'label' => 'Facebook URL',           'default' => 'https://www.facebook.com/djfrancolive/', 'type' => 'url' ],
+		'djfranco_biz_twitter'    => [ 'label' => 'Twitter URL',            'default' => 'https://twitter.com/djfrancolive', 'type' => 'url' ],
+		'djfranco_biz_soundcloud' => [ 'label' => 'SoundCloud URL',         'default' => 'https://soundcloud.com/djfrancolive', 'type' => 'url' ],
+		'djfranco_biz_youtube'    => [ 'label' => 'YouTube URL',            'default' => 'https://www.youtube.com/channel/UCv9q8QjpOsR_7xBMZH5NEvQ', 'type' => 'url' ],
+		'djfranco_biz_twitch'     => [ 'label' => 'Twitch URL',             'default' => 'https://twitch.tv/djfrancolive', 'type' => 'url' ],
+	];
+	foreach ( $fields as $id => $f ) {
+		$wp_customize->add_setting( $id, [
+			'default'           => $f['default'],
+			'sanitize_callback' => ( $f['type'] === 'url' ? 'esc_url_raw' : 'sanitize_text_field' ),
+		] );
+		$wp_customize->add_control( $id, [ 'label' => $f['label'], 'section' => 'djfranco_business', 'type' => $f['type'] ] );
+	}
+
 	// --- Featured video (home page, after the mixes section) ---
 	$wp_customize->add_section( 'djfranco_video', [
 		'title'    => __( 'Featured Video', 'djfranco' ),
@@ -219,6 +248,52 @@ add_action( 'customize_register', function ( $wp_customize ) {
 		'type'        => 'checkbox',
 	] );
 } );
+
+/* ============================================================
+ * SEO — structured data (JSON-LD)
+ * ----------------------------------------------------------------
+ * Emits MusicGroup + LocalBusiness schema in <head>. Google uses this
+ * to display rich results: artist name, genres, social profiles,
+ * service area, contact info. Powered by Customizer → Business Info.
+ * ============================================================ */
+add_action( 'wp_head', function () {
+	if ( is_admin() ) return;
+	$socials = array_filter( [
+		get_theme_mod( 'djfranco_biz_instagram'  ),
+		get_theme_mod( 'djfranco_biz_facebook'   ),
+		get_theme_mod( 'djfranco_biz_twitter'    ),
+		get_theme_mod( 'djfranco_biz_soundcloud' ),
+		get_theme_mod( 'djfranco_biz_youtube'    ),
+		get_theme_mod( 'djfranco_biz_twitch'     ),
+	] );
+	$genres = array_filter( array_map( 'trim', explode( ',', (string) get_theme_mod( 'djfranco_biz_genres', '' ) ) ) );
+	$logo_url = function_exists( 'djfranco_logo_url' ) ? djfranco_logo_url() : '';
+	$base = [
+		'@context'    => 'https://schema.org',
+		'@type'       => [ 'MusicGroup', 'LocalBusiness' ],
+		'name'        => get_bloginfo( 'name' ),
+		'description' => get_bloginfo( 'description' ),
+		'url'         => home_url( '/' ),
+		'image'       => $logo_url,
+		'logo'        => $logo_url,
+		'telephone'   => get_theme_mod( 'djfranco_biz_phone', '' ),
+		'email'       => get_theme_mod( 'djfranco_biz_email', '' ),
+		'foundingDate'=> get_theme_mod( 'djfranco_biz_founded', '' ),
+		'genre'       => $genres,
+		'areaServed'  => array_filter( array_map( 'trim', explode( ',', (string) get_theme_mod( 'djfranco_biz_area', '' ) ) ) ),
+		'address'     => [
+			'@type'           => 'PostalAddress',
+			'addressLocality' => get_theme_mod( 'djfranco_biz_city',    '' ),
+			'addressRegion'   => get_theme_mod( 'djfranco_biz_region',  '' ),
+			'addressCountry'  => get_theme_mod( 'djfranco_biz_country', '' ),
+		],
+		'sameAs'      => array_values( $socials ),
+	];
+	// Strip empty / falsy keys so the JSON stays clean.
+	$base = array_filter( $base, function ( $v ) { return ! ( is_null( $v ) || $v === '' || ( is_array( $v ) && empty( array_filter( $v ) ) ) ); } );
+	echo "\n<!-- DJ Franco · JSON-LD -->\n";
+	echo '<script type="application/ld+json">' . wp_json_encode( $base, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) . "</script>\n";
+}, 5 );
 
 /**
  * Convert any YouTube URL into a clean privacy-friendly embed URL.
