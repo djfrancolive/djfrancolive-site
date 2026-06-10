@@ -307,6 +307,141 @@ add_action( 'admin_notices', function () {
 	echo '<div class="notice notice-info"><p><strong>DJ Franco theme:</strong> Google Analytics isn\'t configured yet. <a href="' . esc_url( admin_url( 'customize.php?autofocus[section]=djfranco_analytics' ) ) . '">Paste your GA4 Measurement ID</a> to start tracking leads.</p></div>';
 } );
 
+/* ============================================================
+ * Custom Post Type: Mix
+ * ----------------------------------------------------------------
+ * Each mix is a post in WP admin → "Mixes" so you can add / edit /
+ * reorder from your phone's browser. Fields per mix:
+ *   - Title              (post title)
+ *   - Subtitle           (post excerpt) — the small description
+ *   - SoundCloud URL     (custom field: djfranco_soundcloud_url)
+ *   - Mixcloud/Spotify URL (optional: djfranco_alt_url)
+ *   - Length             (custom field: djfranco_length, e.g. "78 min")
+ *   - Plays              (custom field: djfranco_plays, e.g. "12.4k")
+ *   - Tags               (built-in tags)
+ *   - Featured image     (cover art — falls back to gradient if none)
+ * ============================================================ */
+add_action( 'init', function () {
+	register_post_type( 'djf_mix', [
+		'labels' => [
+			'name'               => __( 'Mixes', 'djfranco' ),
+			'singular_name'      => __( 'Mix', 'djfranco' ),
+			'add_new'            => __( 'Add New Mix', 'djfranco' ),
+			'add_new_item'       => __( 'Add New Mix', 'djfranco' ),
+			'edit_item'          => __( 'Edit Mix', 'djfranco' ),
+			'new_item'           => __( 'New Mix', 'djfranco' ),
+			'view_item'          => __( 'View Mix', 'djfranco' ),
+			'search_items'       => __( 'Search Mixes', 'djfranco' ),
+			'not_found'          => __( 'No mixes yet — add your first one.', 'djfranco' ),
+			'menu_name'          => __( 'Mixes', 'djfranco' ),
+		],
+		'public'              => true,
+		'show_in_rest'        => true,
+		'has_archive'         => false,
+		'rewrite'             => [ 'slug' => 'mix' ],
+		'menu_position'       => 5,
+		'menu_icon'           => 'dashicons-format-audio',
+		'supports'            => [ 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes' ],
+		'taxonomies'          => [ 'post_tag' ],
+	] );
+} );
+
+/**
+ * Mix meta box — SoundCloud URL, length, plays.
+ */
+add_action( 'add_meta_boxes', function () {
+	add_meta_box(
+		'djf_mix_details',
+		__( 'Mix Details', 'djfranco' ),
+		'djfranco_mix_meta_box',
+		'djf_mix',
+		'normal',
+		'high'
+	);
+} );
+
+function djfranco_mix_meta_box( $post ) {
+	wp_nonce_field( 'djfranco_mix_save', 'djfranco_mix_nonce' );
+	$sc    = get_post_meta( $post->ID, 'djfranco_soundcloud_url', true );
+	$alt   = get_post_meta( $post->ID, 'djfranco_alt_url',        true );
+	$len   = get_post_meta( $post->ID, 'djfranco_length',         true );
+	$plays = get_post_meta( $post->ID, 'djfranco_plays',          true );
+	?>
+	<p>
+		<label style="display:block;font-weight:600;margin-bottom:4px;">SoundCloud URL</label>
+		<input type="url" name="djfranco_soundcloud_url" value="<?php echo esc_attr( $sc ); ?>" style="width:100%;" placeholder="https://soundcloud.com/djfrancolive/your-mix" />
+		<span class="description">Paste the full SoundCloud track URL. Click on the card opens this.</span>
+	</p>
+	<p>
+		<label style="display:block;font-weight:600;margin-bottom:4px;">Alternate URL (optional)</label>
+		<input type="url" name="djfranco_alt_url" value="<?php echo esc_attr( $alt ); ?>" style="width:100%;" placeholder="https://www.mixcloud.com/... or Spotify, YouTube, etc." />
+		<span class="description">Used if you'd rather host on Mixcloud / Spotify / YouTube.</span>
+	</p>
+	<p style="display:flex;gap:1rem;">
+		<span style="flex:1;">
+			<label style="display:block;font-weight:600;margin-bottom:4px;">Length</label>
+			<input type="text" name="djfranco_length" value="<?php echo esc_attr( $len ); ?>" style="width:100%;" placeholder="78 min" />
+		</span>
+		<span style="flex:1;">
+			<label style="display:block;font-weight:600;margin-bottom:4px;">Plays</label>
+			<input type="text" name="djfranco_plays" value="<?php echo esc_attr( $plays ); ?>" style="width:100%;" placeholder="12.4k plays" />
+		</span>
+	</p>
+	<?php
+}
+
+add_action( 'save_post_djf_mix', function ( $post_id ) {
+	if ( ! isset( $_POST['djfranco_mix_nonce'] ) || ! wp_verify_nonce( $_POST['djfranco_mix_nonce'], 'djfranco_mix_save' ) ) {
+		return;
+	}
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+		return;
+	}
+	if ( ! current_user_can( 'edit_post', $post_id ) ) {
+		return;
+	}
+	foreach ( [ 'djfranco_soundcloud_url', 'djfranco_alt_url', 'djfranco_length', 'djfranco_plays' ] as $key ) {
+		if ( isset( $_POST[ $key ] ) ) {
+			update_post_meta( $post_id, $key, sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) );
+		}
+	}
+} );
+
+/**
+ * Helper used by the mix-grid pattern.
+ * Returns an array of mix data shaped like the old JS array.
+ * @param int|null $limit  Cap results; null = no cap.
+ */
+function djfranco_get_mixes( $limit = null ) {
+	$args = [
+		'post_type'      => 'djf_mix',
+		'post_status'    => 'publish',
+		'orderby'        => [ 'menu_order' => 'ASC', 'date' => 'DESC' ],
+		'posts_per_page' => $limit ? (int) $limit : -1,
+	];
+	$q = new WP_Query( $args );
+	$out = [];
+	$i = 1;
+	foreach ( $q->posts as $p ) {
+		$url = get_post_meta( $p->ID, 'djfranco_soundcloud_url', true );
+		$alt = get_post_meta( $p->ID, 'djfranco_alt_url',        true );
+		$out[] = [
+			'id'      => $p->ID,
+			'n'      => str_pad( (string) $i, 3, '0', STR_PAD_LEFT ),
+			'title'  => get_the_title( $p ),
+			'sub'    => $p->post_excerpt ?: wp_trim_words( wp_strip_all_tags( $p->post_content ), 18 ),
+			'url'    => $url ?: $alt ?: '#',
+			'source' => $url ? 'SoundCloud' : ( $alt ? 'Listen' : '' ),
+			'length' => get_post_meta( $p->ID, 'djfranco_length', true ),
+			'plays'  => get_post_meta( $p->ID, 'djfranco_plays', true ),
+			'date'   => get_the_date( 'M Y', $p ),
+			'thumb'  => get_the_post_thumbnail_url( $p, 'large' ),
+		];
+		$i++;
+	}
+	return $out;
+}
+
 /**
  * Bootstrap the site's pages on theme activation.
  *
@@ -380,6 +515,33 @@ function djfranco_bootstrap_pages() {
 		}
 	}
 
+	// Seed initial mixes from djfrancolive.com if none exist yet.
+	$existing_mixes = get_posts( [ 'post_type' => 'djf_mix', 'posts_per_page' => 1, 'fields' => 'ids' ] );
+	if ( empty( $existing_mixes ) ) {
+		$seeds = [
+			[ 'title' => 'Sunset Heat — Live at Bouzy, Hyde Park', 'sub' => 'Live recording from Bouzy in Hyde Park, Tampa.', 'url' => 'https://soundcloud.com/djfrancolive', 'len' => '60 min', 'plays' => '' ],
+			[ 'title' => 'Open Format & Jersey Club',              'sub' => 'High-energy open format meets Jersey club.',     'url' => 'https://soundcloud.com/djfrancolive', 'len' => '55 min', 'plays' => '' ],
+			[ 'title' => '989Jamz 4th of July Mix · Part 1',       'sub' => 'On-air mix for 98.9 Jamz · Independence Day.',   'url' => 'https://soundcloud.com/djfrancolive', 'len' => '45 min', 'plays' => '' ],
+			[ 'title' => '989Jamz 4th of July Mix · Part 2',       'sub' => 'Part 2 of the 98.9 Jamz Independence Day set.', 'url' => 'https://soundcloud.com/djfrancolive', 'len' => '45 min', 'plays' => '' ],
+			[ 'title' => 'Smooth R&B Mix',                          'sub' => 'Slow burners and R&B classics.',                 'url' => 'https://soundcloud.com/djfrancolive', 'len' => '50 min', 'plays' => '' ],
+		];
+		$order = 1;
+		foreach ( $seeds as $m ) {
+			$mid = wp_insert_post( [
+				'post_type'    => 'djf_mix',
+				'post_status'  => 'publish',
+				'post_title'   => $m['title'],
+				'post_excerpt' => $m['sub'],
+				'menu_order'   => $order++,
+			] );
+			if ( $mid && ! is_wp_error( $mid ) ) {
+				update_post_meta( $mid, 'djfranco_soundcloud_url', $m['url'] );
+				update_post_meta( $mid, 'djfranco_length',         $m['len'] );
+				update_post_meta( $mid, 'djfranco_plays',          $m['plays'] );
+			}
+		}
+	}
+
 	// Primary nav menu — create + assign if missing.
 	$menu_name = 'Primary';
 	$menu = wp_get_nav_menu_object( $menu_name );
@@ -419,9 +581,9 @@ function djfranco_bootstrap_pages() {
  * deployed onto an already-active theme (e.g. SFTP push). Runs once.
  */
 add_action( 'init', function () {
-	if ( get_option( 'djfranco_bootstrapped' ) === DJFRANCO_VERSION . '.2' ) {
+	if ( get_option( 'djfranco_bootstrapped' ) === DJFRANCO_VERSION . '.3' ) {
 		return;
 	}
 	djfranco_bootstrap_pages();
-	update_option( 'djfranco_bootstrapped', DJFRANCO_VERSION . '.2' );
+	update_option( 'djfranco_bootstrapped', DJFRANCO_VERSION . '.3' );
 }, 99 );
