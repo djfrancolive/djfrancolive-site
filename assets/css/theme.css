@@ -878,12 +878,21 @@ body {
 }
 .djf-socials { display: flex; gap: .5rem; }
 .djf-socials a {
-  width: 38px; height: 38px; border-radius: 50%;
+  width: 44px; height: 44px; border-radius: 50%;
   background: transparent; border: 1px solid var(--line);
   display: grid; place-items: center;
   color: var(--contrast); font-size: .9rem;
   text-decoration: none;
   transition: all .2s var(--ease);
+}
+/* Mobile tap target floor — WCAG 2.5.5 / Apple HIG ≥44×44 */
+@media (max-width: 640px) {
+  .djf-footer__grid li a,
+  .djfranco-nav a,
+  .djf-btn,
+  .djf-pkg__footer a,
+  .djf-mix-card__play,
+  .djf-logos__item { min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; }
 }
 .djf-socials a:hover {
   background: var(--accent); color: var(--base);

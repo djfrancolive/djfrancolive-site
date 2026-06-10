@@ -30,7 +30,7 @@ $portrait = esc_url( get_template_directory_uri() . '/assets/img/franco-official
       <dl class="djf-hero__meta">
         <div><dt>Based</dt><dd>Tampa, FL</dd></div>
         <div><dt>Style</dt><dd>Open-Format · World Sounds</dd></div>
-        <div><dt>Since</dt><dd>2014</dd></div>
+        <div><dt>Since</dt><dd>2016</dd></div>
         <div><dt>Travel</dt><dd>Worldwide</dd></div>
       </dl>
     </div>

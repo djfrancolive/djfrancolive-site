@@ -8,17 +8,17 @@
 $img_base = get_template_directory_uri() . '/assets/img';
 // Fallback to existing site media if theme images are missing.
 $tiles = [
-  [ 'img' => $img_base . '/franco-live-1.jpg',        'span' => 'span-6-2', 'label' => 'Florida Gators Basketball · Gainesville', 'pos' => '' ],
-  [ 'img' => $img_base . '/franco-dj-1.jpg',          'span' => 'span-3-2', 'label' => 'Armature Works · Tampa',         'pos' => '' ],
-  [ 'img' => $img_base . '/franco-clean-2.jpg',       'span' => 'span-3-2', 'label' => 'Studio · Edit session',           'pos' => '' ],
-  [ 'img' => $img_base . '/franco-dj-2.jpg',          'span' => 'span-4-1', 'label' => 'Crowd · peak hour',               'pos' => '' ],
-  [ 'img' => $img_base . '/franco-pro-2.jpg',         'span' => 'span-4-1', 'label' => 'Booth detail',                    'pos' => '' ],
-  [ 'img' => $img_base . '/franco-official-2.jpg',    'span' => 'span-4-1', 'label' => 'Wedding · Oxford Exchange',       'pos' => 'center 20%' ],
-  [ 'img' => $img_base . '/franco-dj-3.jpg',          'span' => 'span-8-2', 'label' => 'Brand activation · Coca-Cola',    'pos' => '' ],
-  [ 'img' => $img_base . '/franco-clean-3.jpg',       'span' => 'span-4-2', 'label' => 'Portrait · 2024',                 'pos' => '' ],
-  [ 'img' => $img_base . '/franco-dj-4.jpg',          'span' => 'span-3-1', 'label' => 'JW Marriott Water Street',        'pos' => '' ],
-  [ 'img' => $img_base . '/franco-pro-3.jpg',         'span' => 'span-3-1', 'label' => 'Mexico · destination set',        'pos' => '' ],
-  [ 'img' => $img_base . '/franco-clean-4.jpg',       'span' => 'span-6-2', 'label' => 'Private affair · Hotel Flor',     'pos' => '' ],
+  [ 'img' => $img_base . '/franco-dj-1.jpg',          'span' => 'span-6-2', 'label' => 'Behind the decks',                'pos' => '' ],
+  [ 'img' => $img_base . '/franco-dj-2.jpg',          'span' => 'span-3-2', 'label' => 'Live set',                        'pos' => '' ],
+  [ 'img' => $img_base . '/franco-official.jpg',      'span' => 'span-3-2', 'label' => 'Portrait',                        'pos' => 'center 20%' ],
+  [ 'img' => $img_base . '/franco-dj-3.jpg',          'span' => 'span-4-1', 'label' => 'Mixing the night',                'pos' => '' ],
+  [ 'img' => $img_base . '/franco-dj-4.jpg',          'span' => 'span-4-1', 'label' => 'Booth detail',                    'pos' => '' ],
+  [ 'img' => $img_base . '/franco-official-2.jpg',    'span' => 'span-4-1', 'label' => 'On the floor',                    'pos' => 'center 20%' ],
+  [ 'img' => $img_base . '/franco-dj-1.jpg',          'span' => 'span-8-2', 'label' => 'Open-format energy',              'pos' => '' ],
+  [ 'img' => $img_base . '/franco-dj-2.jpg',          'span' => 'span-4-2', 'label' => 'In the mix',                      'pos' => '' ],
+  [ 'img' => $img_base . '/franco-dj-3.jpg',          'span' => 'span-3-1', 'label' => 'Set in motion',                   'pos' => '' ],
+  [ 'img' => $img_base . '/franco-dj-4.jpg',          'span' => 'span-3-1', 'label' => 'Reading the room',                'pos' => '' ],
+  [ 'img' => $img_base . '/franco-official.jpg',      'span' => 'span-6-2', 'label' => 'DJ Franco · Tampa',               'pos' => '' ],
 ];
 ?>
 <!-- wp:html -->

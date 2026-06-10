@@ -5,7 +5,7 @@
  * Categories: djfranco-section
  * Description: Two-column split: image left with color wash, copy right.
  */
-$img = esc_url( get_template_directory_uri() . '/assets/img/franco-pro-1.jpg' );
+$img = esc_url( get_template_directory_uri() . '/assets/img/franco-dj-1.jpg' );
 ?>
 <!-- wp:html -->
 <section class="djf-section djfranco-reveal">

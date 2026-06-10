@@ -14,12 +14,12 @@
       <article class="djf-pkg">
         <p class="djf-pkg__label">Essential</p>
         <h3 class="djf-pkg__title">Private Event</h3>
-        <p class="djf-pkg__desc">Private affairs, birthdays, small venues up to ~100 guests.</p>
+        <p class="djf-pkg__desc">Private affairs, birthdays, intimate to mid-size venues up to ~500 guests.</p>
         <p class="djf-pkg__price">From $800 <span>USD</span></p>
         <hr class="djf-pkg__sep">
         <ul class="djf-pkg__list">
           <li>4 hours of performance</li>
-          <li>Pro sound system for up to 100 guests</li>
+          <li>Pro sound system for up to 500 guests</li>
           <li>Wireless microphone</li>
           <li>Planning consult (30 min)</li>
           <li>Curated playlist prep</li>

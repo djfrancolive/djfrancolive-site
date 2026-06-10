@@ -59,7 +59,7 @@
               "fontFamily": "Anton",
               "fontStyle": "normal",
               "fontWeight": "400",
-              "src": ["file:./assets/fonts/anton-regular.woff2"]
+              "src": ["file:./assets/fonts/Anton-Regular.ttf"]
             }
           ]
         },
@@ -72,7 +72,7 @@
               "fontFamily": "Space Grotesk",
               "fontStyle": "normal",
               "fontWeight": "400 700",
-              "src": ["file:./assets/fonts/space-grotesk-variable.woff2"]
+              "src": ["file:./assets/fonts/SpaceGrotesk-VariableFont_wght.ttf"]
             }
           ]
         },
@@ -85,7 +85,7 @@
               "fontFamily": "Inter",
               "fontStyle": "normal",
               "fontWeight": "300 800",
-              "src": ["file:./assets/fonts/inter-variable.woff2"]
+              "src": ["file:./assets/fonts/InterVariable.woff2"]
             }
           ]
         },

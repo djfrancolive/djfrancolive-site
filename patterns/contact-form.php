@@ -50,12 +50,16 @@
 
       <aside class="djf-contact-side">
         <div class="djf-contact-side__block">
-          <p class="djf-contact-side__label">Direct</p>
+          <p class="djf-contact-side__label">Email</p>
           <p class="djf-contact-side__value"><a href="mailto:bookings@djfrancolive.com" style="color:var(--contrast)">bookings@djfrancolive.com</a></p>
         </div>
         <div class="djf-contact-side__block">
+          <p class="djf-contact-side__label">Phone</p>
+          <p class="djf-contact-side__value"><a href="tel:+15612943587" style="color:var(--contrast)">(561) 294-3587</a></p>
+        </div>
+        <div class="djf-contact-side__block">
           <p class="djf-contact-side__label">Based</p>
-          <p class="djf-contact-side__value">Tampa, FL · Worldwide travel
+          <p class="djf-contact-side__value">Tampa, FL &middot; Worldwide travel</p>
         </div>
         <div class="djf-contact-side__block">
           <p class="djf-contact-side__label">Response time</p>
@@ -64,10 +68,12 @@
         <div class="djf-contact-side__block">
           <p class="djf-contact-side__label">Follow</p>
           <div class="djf-socials" style="margin-top:.5rem;">
-            <a href="#" aria-label="Instagram">IG</a>
-            <a href="#" aria-label="SoundCloud">SC</a>
-            <a href="#" aria-label="Spotify">SP</a>
-            <a href="#" aria-label="YouTube">YT</a>
+            <a href="https://www.instagram.com/francois561/" target="_blank" rel="noopener" aria-label="Instagram">IG</a>
+            <a href="https://www.facebook.com/djfrancolive/" target="_blank" rel="noopener" aria-label="Facebook">FB</a>
+            <a href="https://twitter.com/djfrancolive" target="_blank" rel="noopener" aria-label="Twitter">TW</a>
+            <a href="https://soundcloud.com/djfrancolive" target="_blank" rel="noopener" aria-label="SoundCloud">SC</a>
+            <a href="https://www.youtube.com/channel/UCv9q8QjpOsR_7xBMZH5NEvQ" target="_blank" rel="noopener" aria-label="YouTube">YT</a>
+            <a href="https://twitch.tv/djfrancolive/home" target="_blank" rel="noopener" aria-label="Twitch">TV</a>
           </div>
         </div>
       </aside>
