@@ -163,12 +163,36 @@
       var bars = wave.querySelectorAll('i');
       if (!bars.length) return;
 
+      var timeEl = card.querySelector('.djf-mix-card__time');
+
+      function fmt(s) {
+        if (!isFinite(s) || s < 0) s = 0;
+        s = Math.floor(s);
+        var h = Math.floor(s / 3600);
+        var m = Math.floor((s % 3600) / 60);
+        var sec = s % 60;
+        var mm = (h > 0 && m < 10 ? '0' : '') + m;
+        var ss = (sec < 10 ? '0' : '') + sec;
+        return (h > 0 ? h + ':' : '') + mm + ':' + ss;
+      }
+      function updateTime() {
+        if (!timeEl) return;
+        if (!isFinite(audio.duration)) { timeEl.textContent = '—:— / —:—'; return; }
+        var remain = audio.duration - audio.currentTime;
+        timeEl.innerHTML = fmt(audio.currentTime) + ' / <span class="djf-mix-card__time-remain">-' + fmt(remain) + '</span>';
+      }
       function seekFromX(clientX) {
-        var rect = wave.getBoundingClientRect();
-        var pct  = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+        // Use the actual bar range, not the padded waveform container,
+        // so a click on the leftmost bar = 0% and rightmost bar = 100%.
+        var first = bars[0].getBoundingClientRect();
+        var last  = bars[bars.length - 1].getBoundingClientRect();
+        var start = first.left;
+        var end   = last.right;
+        var pct   = Math.max(0, Math.min(1, (clientX - start) / (end - start)));
         if (audio.duration && isFinite(audio.duration)) {
           audio.currentTime = pct * audio.duration;
           paintProgress(pct);
+          updateTime();
         }
       }
       function paintProgress(pct) {
@@ -186,14 +210,20 @@
       wave.addEventListener('touchstart', function (e) { seekFromX(evX(e)); }, { passive: true });
       wave.addEventListener('touchmove',  function (e) { seekFromX(evX(e)); }, { passive: true });
 
+      audio.addEventListener('loadedmetadata', function () {
+        if (timeEl) timeEl.classList.add('is-ready');
+        updateTime();
+      });
       audio.addEventListener('timeupdate', function () {
         if (audio.duration && isFinite(audio.duration)) {
           paintProgress(audio.currentTime / audio.duration);
+          updateTime();
         }
       });
       audio.addEventListener('ended', function () {
         card.classList.remove('is-playing');
         paintProgress(0);
+        if (timeEl) timeEl.innerHTML = fmt(0) + ' / <span class="djf-mix-card__time-remain">-' + fmt(audio.duration || 0) + '</span>';
       });
     });
   }

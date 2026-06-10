@@ -55,6 +55,9 @@ $show_all = ! $is_home;
               <a href="<?php echo esc_url( $m['url'] ); ?>" target="_blank" rel="noopener" class="djf-mix-card__play" aria-label="Open <?php echo esc_attr( $m['title'] ); ?>">▶</a>
             <?php endif; ?>
             <span class="djf-mix-card__num"><?php echo esc_html( $m['n'] ); ?></span>
+            <?php if ( ! empty( $m['audio'] ) ) : ?>
+              <span class="djf-mix-card__time" aria-hidden="true">—:— / —:—</span>
+            <?php endif; ?>
           </div>
           <div class="djf-mix-card__body">
             <div class="djf-mix-card__meta">
@@ -76,7 +79,7 @@ $show_all = ! $is_home;
               <p class="djf-mix-card__sub"><?php echo esc_html( $m['sub'] ); ?></p>
             <?php endif; ?>
             <?php if ( ! empty( $m['audio'] ) ) : ?>
-              <audio class="djf-mix-card__audio" preload="none" src="<?php echo esc_url( $m['audio'] ); ?>" aria-hidden="true"></audio>
+              <audio class="djf-mix-card__audio" preload="metadata" src="<?php echo esc_url( $m['audio'] ); ?>" aria-hidden="true"></audio>
             <?php endif; ?>
           </div>
           <div class="djf-mix-card__footer">
