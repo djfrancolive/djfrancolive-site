@@ -400,13 +400,16 @@ body {
   content:""; position: absolute; inset: 0;
   background: linear-gradient(135deg, rgba(255,106,0,.25), rgba(255,45,117,.25) 50%, rgba(0,229,255,.2));
   mix-blend-mode: screen;
+  pointer-events: none;
 }
 .djf-mix-card__art::after {
   content:""; position: absolute; inset: 0;
   background: repeating-linear-gradient(90deg, rgba(255,255,255,.08) 0 2px, transparent 2px 7px);
   mask-image: radial-gradient(ellipse at center, black 40%, transparent 70%);
   opacity: .35;
+  pointer-events: none;
 }
+.djf-mix-card__art .djf-waveform { pointer-events: none; }
 .djf-mix-card__art .djf-waveform {
   position: absolute; inset: auto 0 0 0;
   height: 60%; display: flex; align-items: flex-end;
@@ -426,6 +429,8 @@ body {
   box-shadow: 0 10px 25px rgba(0,0,0,.4);
   transition: transform .25s var(--ease), background .25s var(--ease);
   text-decoration: none;
+  z-index: 2;
+  cursor: pointer;
 }
 .djf-mix-card:hover .djf-mix-card__play { transform: scale(1.08); background: var(--accent); color: var(--base); }
 .djf-mix-card__num {
