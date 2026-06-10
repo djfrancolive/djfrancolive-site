@@ -3,32 +3,16 @@
 #
 # When you click "Deploy HEAD Commit" in cPanel → Git Version Control,
 # this file runs. It copies the theme into wp-content/themes/djfranco/
-# on the live site, excluding repo cruft (.git, .github, docs, etc.).
+# on the live site, excluding repo cruft.
 #
-# After the first clone in cPanel:
-#   1. cPanel → Git Version Control → "Manage" on this repo → "Pull or Deploy" tab
-#   2. Click "Update from Remote"  — pulls latest from GitHub
-#   3. Click "Deploy HEAD Commit"  — runs the tasks below
+# Each task line runs in its OWN shell, so we can't `export` a variable
+# on one line and reuse it on the next — every path is inlined.
 #
-# Edit DEPLOYPATH below if your WordPress isn't at /public_html/.
-# (Examples: site in a subfolder → /public_html/blog/, addon domain → /public_html/djfrancolive.com/)
+# Edit the path below if your WordPress isn't at /public_html/.
+# (Examples: site in a subfolder → /public_html/blog/, addon domain →
+# /public_html/djfrancolive.com/)
 
 deployment:
   tasks:
-    - export DEPLOYPATH=$HOME/public_html/wp-content/themes/djfranco/
-    - /bin/mkdir -p $DEPLOYPATH
-    - >-
-      /usr/bin/rsync -av --delete
-      --exclude='.git'
-      --exclude='.github'
-      --exclude='.claude'
-      --exclude='.vscode'
-      --exclude='.idea'
-      --exclude='node_modules'
-      --exclude='wp-updates'
-      --exclude='deploy.yml.example'
-      --exclude='.cpanel.yml'
-      --exclude='*.md'
-      --exclude='Thumbs.db'
-      --exclude='.DS_Store'
-      ./ $DEPLOYPATH
+    - /bin/mkdir -p $HOME/public_html/wp-content/themes/djfranco/
+    - /usr/bin/rsync -av --delete --exclude='.git' --exclude='.github' --exclude='.claude' --exclude='.vscode' --exclude='.idea' --exclude='node_modules' --exclude='wp-updates' --exclude='deploy.yml.example' --exclude='.cpanel.yml' --exclude='*.md' --exclude='Thumbs.db' --exclude='.DS_Store' $HOME/repositories/djfrancolive-site/ $HOME/public_html/wp-content/themes/djfranco/
