@@ -76,7 +76,7 @@ $show_all = ! $is_home;
               <p class="djf-mix-card__sub"><?php echo esc_html( $m['sub'] ); ?></p>
             <?php endif; ?>
             <?php if ( ! empty( $m['audio'] ) ) : ?>
-              <audio class="djf-mix-card__audio" preload="none" controls src="<?php echo esc_url( $m['audio'] ); ?>"></audio>
+              <audio class="djf-mix-card__audio" preload="none" src="<?php echo esc_url( $m['audio'] ); ?>" aria-hidden="true"></audio>
             <?php endif; ?>
           </div>
           <div class="djf-mix-card__footer">
