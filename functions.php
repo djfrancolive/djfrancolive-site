@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DJFRANCO_VERSION', '1.0.3' );
+define( 'DJFRANCO_VERSION', '1.0.4' );
 define( 'DJFRANCO_DIR', get_stylesheet_directory() );
 define( 'DJFRANCO_URI', get_stylesheet_directory_uri() );
 
@@ -536,6 +536,128 @@ function djfranco_get_kit_files() {
 	return $out;
 }
 
+/* ============================================================
+ * Custom Post Type: Gallery Item
+ * ----------------------------------------------------------------
+ * Each gallery item is a post under wp-admin → Gallery. Fields:
+ *   - Title              (hover label)
+ *   - Media URL          (image OR video — picker filters to both)
+ *   - Span class         (grid layout tile size)
+ *   - Background position (optional)
+ *   - menu_order         (display order, drag to reorder via "Order" field)
+ * Videos (.mp4/.webm/.mov) auto-render as muted autoplay loops.
+ * ============================================================ */
+add_action( 'init', function () {
+	register_post_type( 'djf_gallery', [
+		'labels' => [
+			'name'          => __( 'Gallery', 'djfranco' ),
+			'singular_name' => __( 'Gallery Item', 'djfranco' ),
+			'add_new_item'  => __( 'Add Gallery Item', 'djfranco' ),
+			'edit_item'     => __( 'Edit Gallery Item', 'djfranco' ),
+			'menu_name'     => __( 'Gallery', 'djfranco' ),
+			'not_found'     => __( 'No gallery items yet.', 'djfranco' ),
+		],
+		'public'        => false,
+		'show_ui'       => true,
+		'show_in_rest'  => true,
+		'menu_position' => 7,
+		'menu_icon'     => 'dashicons-format-gallery',
+		'supports'      => [ 'title', 'page-attributes' ],
+	] );
+} );
+
+add_action( 'add_meta_boxes', function () {
+	add_meta_box( 'djf_gallery_details', __( 'Gallery Item Details', 'djfranco' ), 'djfranco_gallery_meta_box', 'djf_gallery', 'normal', 'high' );
+} );
+
+function djfranco_gallery_meta_box( $post ) {
+	wp_nonce_field( 'djfranco_gallery_save', 'djfranco_gallery_nonce' );
+	$url  = get_post_meta( $post->ID, 'djfranco_media_url', true );
+	$span = get_post_meta( $post->ID, 'djfranco_span',      true ) ?: 'span-4-2';
+	$pos  = get_post_meta( $post->ID, 'djfranco_bg_pos',    true );
+	$spans = [
+		'span-6-2' => 'Wide (6 cols × 2 rows) — big feature',
+		'span-8-2' => 'Extra wide (8 × 2)',
+		'span-4-2' => 'Tall (4 × 2)',
+		'span-3-2' => 'Tall narrow (3 × 2)',
+		'span-4-1' => 'Wide short (4 × 1)',
+		'span-3-1' => 'Square (3 × 1)',
+	];
+	?>
+	<p>
+		<label style="display:block;font-weight:600;margin-bottom:4px;">Media URL (image or video)</label>
+		<input type="url" id="djfranco_media_url" name="djfranco_media_url" value="<?php echo esc_attr( $url ); ?>" style="width:calc(100% - 220px); margin-right: 8px;" placeholder="https://djfrancolive.com/wp-content/uploads/…/photo.jpg" />
+		<button type="button" class="button" id="djfranco_pick_media">Choose from Media Library</button>
+		<br><span class="description">Images (.jpg/.png/.webp) → still tile. Videos (.mp4/.webm/.mov) → silent autoplay loop.</span>
+	</p>
+	<p style="display:flex; gap: 1rem;">
+		<span style="flex: 2;">
+			<label style="display:block;font-weight:600;margin-bottom:4px;">Tile size</label>
+			<select name="djfranco_span" style="width:100%;">
+				<?php foreach ( $spans as $val => $label ) : ?>
+					<option value="<?php echo esc_attr( $val ); ?>" <?php selected( $span, $val ); ?>><?php echo esc_html( $label ); ?></option>
+				<?php endforeach; ?>
+			</select>
+		</span>
+		<span style="flex: 1;">
+			<label style="display:block;font-weight:600;margin-bottom:4px;">Image position (optional)</label>
+			<input type="text" name="djfranco_bg_pos" value="<?php echo esc_attr( $pos ); ?>" style="width:100%;" placeholder="center 20%" />
+		</span>
+	</p>
+	<script>
+	(function(){
+		var btn = document.getElementById('djfranco_pick_media');
+		var input = document.getElementById('djfranco_media_url');
+		if (!btn || !input || typeof wp === 'undefined' || !wp.media) return;
+		btn.addEventListener('click', function(e){
+			e.preventDefault();
+			var frame = wp.media({ title: 'Choose gallery media', library: { type: ['image','video'] }, button: { text: 'Use this media' }, multiple: false });
+			frame.on('select', function(){
+				var att = frame.state().get('selection').first().toJSON();
+				input.value = att.url;
+			});
+			frame.open();
+		});
+	})();
+	</script>
+	<?php
+}
+
+add_action( 'save_post_djf_gallery', function ( $post_id ) {
+	if ( ! isset( $_POST['djfranco_gallery_nonce'] ) || ! wp_verify_nonce( $_POST['djfranco_gallery_nonce'], 'djfranco_gallery_save' ) ) return;
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
+	if ( ! current_user_can( 'edit_post', $post_id ) ) return;
+	foreach ( [ 'djfranco_media_url', 'djfranco_span', 'djfranco_bg_pos' ] as $key ) {
+		if ( isset( $_POST[ $key ] ) ) {
+			update_post_meta( $post_id, $key, sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) );
+		}
+	}
+} );
+
+function djfranco_get_gallery() {
+	$q = new WP_Query( [
+		'post_type'      => 'djf_gallery',
+		'post_status'    => 'publish',
+		'orderby'        => [ 'menu_order' => 'ASC', 'date' => 'ASC' ],
+		'posts_per_page' => -1,
+	] );
+	$out = [];
+	foreach ( $q->posts as $p ) {
+		$url = get_post_meta( $p->ID, 'djfranco_media_url', true );
+		if ( ! $url ) continue;
+		$ext = strtolower( pathinfo( wp_parse_url( $url, PHP_URL_PATH ), PATHINFO_EXTENSION ) );
+		$is_video = in_array( $ext, [ 'mp4', 'webm', 'mov', 'm4v' ], true );
+		$out[] = [
+			'title'    => get_the_title( $p ),
+			'url'      => $url,
+			'span'     => get_post_meta( $p->ID, 'djfranco_span',  true ) ?: 'span-4-2',
+			'pos'      => get_post_meta( $p->ID, 'djfranco_bg_pos', true ),
+			'is_video' => $is_video,
+		];
+	}
+	return $out;
+}
+
 /**
  * Helper used by the mix-grid pattern.
  * Returns an array of mix data shaped like the old JS array.
@@ -646,6 +768,39 @@ function djfranco_bootstrap_pages() {
 		}
 	}
 
+	// Seed Gallery — start with the existing photos so the page isn't empty.
+	$existing_gallery = get_posts( [ 'post_type' => 'djf_gallery', 'posts_per_page' => 1, 'fields' => 'ids' ] );
+	if ( empty( $existing_gallery ) ) {
+		$theme_img = get_template_directory_uri() . '/assets/img';
+		$tiles = [
+			[ 'title' => 'Behind the decks',   'url' => $theme_img . '/franco-dj-1.jpg',       'span' => 'span-6-2', 'pos' => '' ],
+			[ 'title' => 'Live set',           'url' => $theme_img . '/franco-dj-2.jpg',       'span' => 'span-3-2', 'pos' => '' ],
+			[ 'title' => 'Portrait',           'url' => $theme_img . '/franco-official.jpg',   'span' => 'span-3-2', 'pos' => 'center 20%' ],
+			[ 'title' => 'Mixing the night',   'url' => $theme_img . '/franco-dj-3.jpg',       'span' => 'span-4-1', 'pos' => '' ],
+			[ 'title' => 'Booth detail',       'url' => $theme_img . '/franco-dj-4.jpg',       'span' => 'span-4-1', 'pos' => '' ],
+			[ 'title' => 'On the floor',       'url' => $theme_img . '/franco-official-2.jpg', 'span' => 'span-4-1', 'pos' => 'center 20%' ],
+			[ 'title' => 'Open-format energy', 'url' => $theme_img . '/franco-dj-1.jpg',       'span' => 'span-8-2', 'pos' => '' ],
+			[ 'title' => 'In the mix',         'url' => $theme_img . '/franco-dj-2.jpg',       'span' => 'span-4-2', 'pos' => '' ],
+			[ 'title' => 'Set in motion',      'url' => $theme_img . '/franco-dj-3.jpg',       'span' => 'span-3-1', 'pos' => '' ],
+			[ 'title' => 'Reading the room',   'url' => $theme_img . '/franco-dj-4.jpg',       'span' => 'span-3-1', 'pos' => '' ],
+			[ 'title' => 'DJ Franco · Tampa',  'url' => $theme_img . '/franco-official.jpg',   'span' => 'span-6-2', 'pos' => '' ],
+		];
+		$order = 1;
+		foreach ( $tiles as $t ) {
+			$gid = wp_insert_post( [
+				'post_type'   => 'djf_gallery',
+				'post_status' => 'publish',
+				'post_title'  => $t['title'],
+				'menu_order'  => $order++,
+			] );
+			if ( $gid && ! is_wp_error( $gid ) ) {
+				update_post_meta( $gid, 'djfranco_media_url', $t['url'] );
+				update_post_meta( $gid, 'djfranco_span',      $t['span'] );
+				update_post_meta( $gid, 'djfranco_bg_pos',    $t['pos'] );
+			}
+		}
+	}
+
 	// Seed Kit Files — EPK at position #1 if none exist yet.
 	$existing_kits = get_posts( [ 'post_type' => 'djf_kit', 'posts_per_page' => 1, 'fields' => 'ids' ] );
 	if ( empty( $existing_kits ) ) {
@@ -739,9 +894,9 @@ function djfranco_bootstrap_pages() {
  * deployed onto an already-active theme (e.g. SFTP push). Runs once.
  */
 add_action( 'init', function () {
-	if ( get_option( 'djfranco_bootstrapped' ) === DJFRANCO_VERSION . '.4' ) {
+	if ( get_option( 'djfranco_bootstrapped' ) === DJFRANCO_VERSION . '.5' ) {
 		return;
 	}
 	djfranco_bootstrap_pages();
-	update_option( 'djfranco_bootstrapped', DJFRANCO_VERSION . '.4' );
+	update_option( 'djfranco_bootstrapped', DJFRANCO_VERSION . '.5' );
 }, 99 );
