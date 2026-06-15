@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DJFRANCO_VERSION', '1.0.8' );
+define( 'DJFRANCO_VERSION', '1.0.9' );
 define( 'DJFRANCO_DIR', get_stylesheet_directory() );
 define( 'DJFRANCO_URI', get_stylesheet_directory_uri() );
 
@@ -138,6 +138,14 @@ add_action( 'init', function () {
  */
 add_action( 'wp_body_open', function () {
 	echo '<a class="skip-link screen-reader-text" href="#wp--skip-link--target">' . esc_html__( 'Skip to content', 'djfranco' ) . '</a>';
+} );
+
+/**
+ * Site-wide floating "Book DJ Franco" CTA. Hidden on /book itself (no point) and on /thank-you (already converted).
+ */
+add_action( 'wp_footer', function () {
+	if ( is_page( [ 'book', 'thank-you' ] ) ) return;
+	echo '<a href="/book/" class="djf-float-cta" aria-label="Book DJ Franco">Book DJ Franco &rarr;</a>';
 } );
 
 /* ============================================================
@@ -848,6 +856,12 @@ function djfranco_bootstrap_pages() {
 		  'content' => "Electronic Press Kit — bio, photos, logos, and downloadable assets for press, venues, and brand partners." ],
 		[ 'slug' => 'contact', 'title' => 'Contact',     'template' => 'page-contact',
 		  'content' => "Tell me the date, venue, guest count, and vibe. Response within 24 hours. bookings@djfrancolive.com · (561) 294-3587 · Tampa, FL · Worldwide travel." ],
+		[ 'slug' => 'book',      'title' => 'Book',       'template' => 'page-book',
+		  'content' => "" ],
+		[ 'slug' => 'press-kit', 'title' => 'Press Kit',  'template' => 'page-press-kit',
+		  'content' => "" ],
+		[ 'slug' => 'thank-you', 'title' => 'Thank You',  'template' => 'page-thank-you',
+		  'content' => "" ],
 		[ 'slug' => 'home',    'title' => 'Home',        'template' => 'front-page',
 		  'content' => "" ],
 	];
@@ -1024,9 +1038,9 @@ function djfranco_bootstrap_pages() {
  * deployed onto an already-active theme (e.g. SFTP push). Runs once.
  */
 add_action( 'init', function () {
-	if ( get_option( 'djfranco_bootstrapped' ) === DJFRANCO_VERSION . '.5' ) {
+	if ( get_option( 'djfranco_bootstrapped' ) === DJFRANCO_VERSION . '.6' ) {
 		return;
 	}
 	djfranco_bootstrap_pages();
-	update_option( 'djfranco_bootstrapped', DJFRANCO_VERSION . '.5' );
+	update_option( 'djfranco_bootstrapped', DJFRANCO_VERSION . '.6' );
 }, 99 );

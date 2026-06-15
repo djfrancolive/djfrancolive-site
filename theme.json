@@ -316,6 +316,9 @@
     { "name": "page-booking", "title": "Page: Booking Packages", "postTypes": ["page"] },
     { "name": "page-gallery", "title": "Page: Gallery", "postTypes": ["page"] },
     { "name": "page-press",   "title": "Page: Press / EPK", "postTypes": ["page"] },
-    { "name": "page-contact", "title": "Page: Contact", "postTypes": ["page"] }
+    { "name": "page-contact", "title": "Page: Contact", "postTypes": ["page"] },
+    { "name": "page-book", "title": "Page: Book (Form 1)", "postTypes": ["page"] },
+    { "name": "page-press-kit", "title": "Page: Press Kit (Form 2)", "postTypes": ["page"] },
+    { "name": "page-thank-you", "title": "Page: Thank You", "postTypes": ["page"] }
   ]
 }
