@@ -24,8 +24,8 @@ $portrait = esc_url( get_template_directory_uri() . '/assets/img/franco-official
         Tampa-based, open-format, and built for luxury weddings, brand activations, and private affairs.
       </p>
       <div class="djf-hero__ctas">
-        <a href="/contact" class="djf-btn djf-btn--primary"><span class="djf-btn__dot"></span>Book a date</a>
-        <a href="/mixes" class="djf-btn djf-btn--ghost">▶ Listen to mixes</a>
+        <a href="/book/" class="djf-btn djf-btn--primary"><span class="djf-btn__dot"></span>Book a Call</a>
+        <a href="/press-kit/" class="djf-btn djf-btn--ghost">Listen / Press Kit</a>
       </div>
       <dl class="djf-hero__meta">
         <div><dt>Based</dt><dd>Tampa, FL</dd></div>

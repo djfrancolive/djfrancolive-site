@@ -9,11 +9,11 @@
 <!-- wp:html -->
 <section class="djf-page-hero djfranco-page-hero djfranco-reveal">
   <div class="djf-container djf-container--wide">
-    <p class="djf-page-hero__crumb"><span>Home</span> &nbsp;/&nbsp; Book a date</p>
-    <h1 class="djf-display djf-h-3xl djf-page-hero__title">Book DJ Franco.</h1>
+    <p class="djf-page-hero__crumb"><span>Home</span> &nbsp;/&nbsp; Book a call</p>
+    <h1 class="djf-display djf-h-3xl djf-page-hero__title">Let&rsquo;s plan your night.</h1>
     <p class="djf-page-hero__lede">
-      Tell me the date, venue, vibe — and I'll get back to you inside 24 hours.
-      Then we'll lock the date with a 25% retainer.
+      Tell me about your event and I&rsquo;ll send a personalized quote within 24 hours
+      &mdash; or scroll down to grab a 15-minute Discovery Call directly.
     </p>
   </div>
 </section>

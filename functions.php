@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DJFRANCO_VERSION', '1.0.9' );
+define( 'DJFRANCO_VERSION', '1.1.0' );
 define( 'DJFRANCO_DIR', get_stylesheet_directory() );
 define( 'DJFRANCO_URI', get_stylesheet_directory_uri() );
 
@@ -141,11 +141,23 @@ add_action( 'wp_body_open', function () {
 } );
 
 /**
- * Site-wide floating "Book DJ Franco" CTA. Hidden on /book itself (no point) and on /thank-you (already converted).
+ * Site-wide Cal.com floating "Book a Call" widget (Snippet 3 from the brief).
+ * Opens the Discovery Call (15 min) modal — cal.com/djfrancolive/discovery.
+ * Loads on every public page. Use Cal.com brand vars per the brief: #292929 / #A47148.
  */
 add_action( 'wp_footer', function () {
-	if ( is_page( [ 'book', 'thank-you' ] ) ) return;
-	echo '<a href="/book/" class="djf-float-cta" aria-label="Book DJ Franco">Book DJ Franco &rarr;</a>';
+	if ( is_admin() ) return;
+	?>
+<!-- Cal.com floating button -->
+<script type="text/javascript">
+(function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if(typeof namespace === "string"){cal.ns[namespace] = cal.ns[namespace] || api;p(cal.ns[namespace], ar);p(cal, ["initNamespace", namespace]);} else p(cal, ar); return;} p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
+Cal("init", "discovery", {origin:"https://app.cal.com"});
+Cal.config = Cal.config || {};
+Cal.config.forwardQueryParams = true;
+Cal.ns.discovery("floatingButton", {"calLink":"djfrancolive/discovery","config":{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}});
+Cal.ns.discovery("ui", {"cssVarsPerTheme":{"light":{"cal-brand":"#292929"},"dark":{"cal-brand":"#A47148"}},"hideEventTypeDetails":false,"layout":"month_view"});
+</script>
+	<?php
 } );
 
 /* ============================================================

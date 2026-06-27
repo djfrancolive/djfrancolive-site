@@ -1,27 +1,21 @@
 <?php
 /**
- * Title: Thank You — Cal.com Discovery + EPK CTA
- * Slug: djfranco/thank-you-cal
+ * Title: Cal.com Discovery (inline)
+ * Slug: djfranco/cal-discovery-inline
  * Categories: djfranco-section
- * Description: Post-form confirmation with inline Cal.com Discovery Call + EPK ghost CTA.
+ * Description: Cal.com Discovery Call inline calendar (cal.com/djfrancolive/discovery). Snippet 1.
  */
 ?>
 <!-- wp:html -->
-<section class="djf-thankyou djfranco-reveal">
+<section class="djf-cal-section djfranco-reveal">
   <div class="djf-container djf-container--wide">
-    <div class="djf-thankyou__head">
-      <p class="djf-eyebrow">Got it</p>
-      <h1 class="djf-display djf-h-3xl">Thanks &mdash; your inquiry&rsquo;s in.</h1>
-      <p class="djf-thankyou__lede">
-        I&rsquo;ll respond within 24 hours. If you want to lock in a time now,
-        pick a Discovery Call slot below.
-      </p>
+    <div class="djf-section-head">
+      <div class="djf-section-head__title">
+        <p class="djf-eyebrow">Or skip the form</p>
+        <h2 class="djf-display djf-h-3xl">Grab a 15-min Discovery Call.</h2>
+      </div>
     </div>
     <div class="djf-cal-embed" id="my-cal-inline-discovery"></div>
-    <div class="djf-thankyou__cta">
-      <a href="/press-kit/" class="djf-btn djf-btn--ghost">Download the EPK ↓</a>
-      <a href="/mixes/" class="djf-btn djf-btn--ghost">▶ Listen to recent mixes</a>
-    </div>
   </div>
 </section>
 <script type="text/javascript">
