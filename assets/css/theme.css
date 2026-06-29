@@ -694,14 +694,19 @@ body {
   display: grid; grid-template-columns: repeat(5, 1fr);
   gap: 1.5rem; align-items: center; padding-block: 2rem;
 }
-@media (max-width: 780px) { .djf-logos { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 980px) { .djf-logos { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 780px) { .djf-logos { grid-template-columns: repeat(3, 1fr); gap: 1.25rem; } }
+@media (max-width: 520px) { .djf-logos { grid-template-columns: repeat(2, 1fr); gap: 1rem 1.5rem; } }
 .djf-logos__item {
   font-family: var(--ff-display);
-  font-size: 1.2rem; color: var(--muted);
+  font-size: clamp(.95rem, .8rem + .8vw, 1.2rem);
+  color: var(--muted);
   text-transform: uppercase; letter-spacing: .08em;
   text-align: center; opacity: .7;
   transition: color .2s var(--ease), opacity .2s var(--ease);
-  white-space: nowrap;
+  word-break: break-word;
+  hyphens: auto;
+  line-height: 1.15;
 }
 .djf-logos__item:hover { color: var(--accent); opacity: 1; }
 

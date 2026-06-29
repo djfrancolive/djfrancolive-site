@@ -12,7 +12,7 @@ $img = esc_url( get_template_directory_uri() . '/assets/img/franco-dj-1.jpg' );
   <div class="djf-container djf-container--wide">
     <div class="djf-split">
       <figure class="djf-split__figure" style="background-image:url('<?php echo $img; ?>'); background-position: center 22%;">
-        <span class="djf-tag-badge">The booth · 2025</span>
+        <span class="djf-tag-badge">The artist</span>
       </figure>
       <div class="djf-split__body">
         <p class="djf-eyebrow">The artist</p>
