@@ -25,7 +25,7 @@ $portrait = esc_url( get_template_directory_uri() . '/assets/img/franco-official
       </p>
       <div class="djf-hero__ctas">
         <a href="/book/" class="djf-btn djf-btn--primary"><span class="djf-btn__dot"></span>Book a Call</a>
-        <a href="/press-kit/" class="djf-btn djf-btn--ghost">Listen / Press Kit</a>
+        <a href="/press-kit/" class="djf-btn djf-btn--ghost">Press Kit</a>
       </div>
       <dl class="djf-hero__meta">
         <div><dt>Based</dt><dd>Tampa, FL</dd></div>
