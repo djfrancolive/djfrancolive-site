@@ -7,8 +7,16 @@
         <span>DJ Franco Live</span>
       </a>
       <p>There are people that play music, and there are DJs that <strong style="color:var(--contrast)">blow minds</strong>. Tampa-based · Worldwide travel.</p>
-      <form class="djf-newsletter" onsubmit="event.preventDefault(); this.querySelector('input').value='Subscribed ✓';">
-        <input type="email" placeholder="Get new mixes in your inbox" aria-label="Email for newsletter">
+      <form class="djf-newsletter"
+            action="https://formsubmit.co/bookings@djfrancolive.com"
+            method="POST"
+            target="_blank">
+        <input type="hidden" name="_subject" value="Newsletter subscribe — DJ Franco Live">
+        <input type="hidden" name="_next" value="https://djfrancolive.com/thank-you/">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="source" value="footer newsletter">
+        <input type="email" name="email" placeholder="Get new mixes in your inbox" aria-label="Email for newsletter" required>
         <button type="submit">Join</button>
       </form>
     </div>

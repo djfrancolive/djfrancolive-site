@@ -26,7 +26,7 @@
       </div>
       <div class="djf-process__step">
         <h4>Retainer</h4>
-        <p>25% locks the date. Contract signed digitally, balance due 14 days before the event.</p>
+        <p>50% locks the date. Contract signed digitally, balance due 14 days before the event.</p>
       </div>
       <div class="djf-process__step">
         <h4>Go time</h4>

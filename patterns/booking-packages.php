@@ -24,7 +24,7 @@
           <li>Planning consult (30 min)</li>
           <li>Curated playlist prep</li>
         </ul>
-        <div class="djf-pkg__footer"><a href="/contact?pkg=private" class="djf-btn djf-btn--ghost">Request quote</a></div>
+        <div class="djf-pkg__footer"><a href="/book/?pkg=private" class="djf-btn djf-btn--ghost">Request quote</a></div>
       </article>
 
       <!-- Signature — featured -->
@@ -43,7 +43,7 @@
           <li>Timeline + music planning session</li>
           <li>MC services included</li>
         </ul>
-        <div class="djf-pkg__footer"><a href="/contact?pkg=wedding" class="djf-btn djf-btn--primary">Check my date</a></div>
+        <div class="djf-pkg__footer"><a href="/book/?pkg=wedding" class="djf-btn djf-btn--primary">Check my date</a></div>
       </article>
 
       <!-- Production -->
@@ -60,12 +60,12 @@
           <li>Open-format or single-genre set</li>
           <li>Brand integration consultation</li>
         </ul>
-        <div class="djf-pkg__footer"><a href="/contact?pkg=production" class="djf-btn djf-btn--ghost">Let's build it</a></div>
+        <div class="djf-pkg__footer"><a href="/book/?pkg=production" class="djf-btn djf-btn--ghost">Let's build it</a></div>
       </article>
     </div>
 
     <p style="text-align:center; color:var(--muted); font-size:.85rem; margin-top:2rem;">
-      Travel, taxes, and venue-specific rigging quoted separately. All packages require a 25% retainer to lock the date.
+      Travel, taxes, and venue-specific rigging quoted separately. All packages require a 50% retainer to lock the date.
     </p>
   </div>
 </section>

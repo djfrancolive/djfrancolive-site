@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DJFRANCO_VERSION', '1.1.3' );
+define( 'DJFRANCO_VERSION', '1.1.4' );
 define( 'DJFRANCO_DIR', get_stylesheet_directory() );
 define( 'DJFRANCO_URI', get_stylesheet_directory_uri() );
 
@@ -861,7 +861,7 @@ function djfranco_bootstrap_pages() {
 		[ 'slug' => 'mixes',   'title' => 'Mixes',       'template' => 'page-mixes',
 		  'content' => "Recent mixes — Sunset Heat live from Bouzy in Hyde Park (Tampa), Open Format and Jersey Club, 989Jamz 4th of July Mix (Parts 1 &amp; 2), and a Smooth R&amp;B Mix. Built live, mixed open-format." ],
 		[ 'slug' => 'booking', 'title' => 'Booking',     'template' => 'page-booking',
-		  'content' => "Private events, luxury weddings, brand activations, arena game-days. Choose a package or request a custom quote. 25% retainer locks the date." ],
+		  'content' => "Private events, luxury weddings, brand activations, arena game-days. Choose a package or request a custom quote. 50% retainer locks the date." ],
 		[ 'slug' => 'gallery', 'title' => 'Gallery',     'template' => 'page-gallery',
 		  'content' => "Selected work behind the decks — live sets, brand activations, weddings." ],
 		[ 'slug' => 'press',   'title' => 'Press / EPK', 'template' => 'page-press',
