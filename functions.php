@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'DJFRANCO_VERSION', '1.1.4' );
+define( 'DJFRANCO_VERSION', '1.2.0' );
 define( 'DJFRANCO_DIR', get_stylesheet_directory() );
 define( 'DJFRANCO_URI', get_stylesheet_directory_uri() );
 
@@ -138,6 +138,38 @@ add_action( 'init', function () {
  */
 add_action( 'wp_body_open', function () {
 	echo '<a class="skip-link screen-reader-text" href="#wp--skip-link--target">' . esc_html__( 'Skip to content', 'djfranco' ) . '</a>';
+} );
+
+/**
+ * SEO housekeeping — noindex funnel/confirmation pages, consolidate /press/ → /press-kit/.
+ */
+add_action( 'template_redirect', function () {
+	// 301 /press/ → /press-kit/ so the audit's two-URL problem collapses to one.
+	if ( is_page( 'press' ) ) {
+		wp_safe_redirect( home_url( '/press-kit/' ), 301 );
+		exit;
+	}
+} );
+
+add_action( 'wp_head', function () {
+	// Noindex thank-you (confirmation pages shouldn't rank or get crawled as content).
+	if ( is_page( [ 'thank-you' ] ) ) {
+		echo '<meta name="robots" content="noindex, follow">' . "\n";
+	}
+}, 2 );
+
+/**
+ * Set descriptive alt text on the custom-logo <img> rendered by WP core.
+ * Yoast won't fill this; it defaults to the bare site title.
+ */
+add_filter( 'get_custom_logo', function ( $html ) {
+	if ( empty( $html ) ) return $html;
+	return preg_replace(
+		'/alt="[^"]*"/i',
+		'alt="DJ Franco Live &mdash; Tampa Wedding &amp; Event DJ"',
+		$html,
+		1
+	);
 } );
 
 /**
@@ -288,26 +320,36 @@ add_action( 'wp_head', function () {
 	] );
 	$genres = array_filter( array_map( 'trim', explode( ',', (string) get_theme_mod( 'djfranco_biz_genres', '' ) ) ) );
 	$logo_url = function_exists( 'djfranco_logo_url' ) ? djfranco_logo_url() : '';
+	// Hard-coded Tampa Bay service-area cities for areaServed — gives Google explicit local coverage.
+	$area_cities = [ 'Tampa', 'St. Petersburg', 'Clearwater', 'Sarasota', 'Orlando', 'Lakeland', 'Bradenton' ];
 	$base = [
 		'@context'    => 'https://schema.org',
-		'@type'       => [ 'MusicGroup', 'LocalBusiness' ],
+		'@type'       => [ 'MusicGroup', 'EntertainmentBusiness', 'LocalBusiness' ],
 		'name'        => get_bloginfo( 'name' ),
-		'description' => get_bloginfo( 'description' ),
+		'description' => get_bloginfo( 'description' ) ?: 'Tampa open-format DJ and MC for luxury weddings, brand activations, and private affairs. Afrobeats, Amapiano, Hip-Hop, R&B, Dancehall.',
 		'url'         => home_url( '/' ),
 		'image'       => $logo_url,
 		'logo'        => $logo_url,
-		'telephone'   => get_theme_mod( 'djfranco_biz_phone', '' ),
-		'email'       => get_theme_mod( 'djfranco_biz_email', '' ),
-		'foundingDate'=> get_theme_mod( 'djfranco_biz_founded', '' ),
-		'genre'       => $genres,
-		'areaServed'  => array_filter( array_map( 'trim', explode( ',', (string) get_theme_mod( 'djfranco_biz_area', '' ) ) ) ),
+		'telephone'   => get_theme_mod( 'djfranco_biz_phone', '+1-561-294-3587' ),
+		'email'       => get_theme_mod( 'djfranco_biz_email', 'bookings@djfrancolive.com' ),
+		'foundingDate'=> get_theme_mod( 'djfranco_biz_founded', '2016' ),
+		'priceRange'  => '$$$',
+		'genre'       => $genres ?: [ 'Open Format', 'Afrobeats', 'Amapiano', 'Hip-Hop', 'R&B', 'Dancehall' ],
+		'areaServed'  => array_map( function ( $city ) {
+			return [ '@type' => 'City', 'name' => $city, 'address' => [ '@type' => 'PostalAddress', 'addressRegion' => 'FL', 'addressCountry' => 'US' ] ];
+		}, $area_cities ),
 		'address'     => [
 			'@type'           => 'PostalAddress',
-			'addressLocality' => get_theme_mod( 'djfranco_biz_city',    '' ),
-			'addressRegion'   => get_theme_mod( 'djfranco_biz_region',  '' ),
-			'addressCountry'  => get_theme_mod( 'djfranco_biz_country', '' ),
+			'addressLocality' => get_theme_mod( 'djfranco_biz_city',    'Tampa' ),
+			'addressRegion'   => get_theme_mod( 'djfranco_biz_region',  'FL' ),
+			'addressCountry'  => get_theme_mod( 'djfranco_biz_country', 'US' ),
 		],
 		'sameAs'      => array_values( $socials ),
+		'makesOffer'  => [
+			[ '@type' => 'Offer', 'name' => 'Private Event DJ Package',   'priceCurrency' => 'USD', 'price' => '800',  'url' => home_url( '/booking/' ) ],
+			[ '@type' => 'Offer', 'name' => 'Luxury Wedding DJ Package',  'priceCurrency' => 'USD', 'price' => '2400', 'url' => home_url( '/booking/' ) ],
+			[ '@type' => 'Offer', 'name' => 'Brand & Arena DJ Package',   'priceCurrency' => 'USD', 'url'   => home_url( '/booking/' ) ],
+		],
 	];
 	// Strip empty / falsy keys so the JSON stays clean.
 	$base = array_filter( $base, function ( $v ) { return ! ( is_null( $v ) || $v === '' || ( is_array( $v ) && empty( array_filter( $v ) ) ) ); } );

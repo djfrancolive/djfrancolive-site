@@ -465,6 +465,78 @@ body {
 .djf-mix-card__time-remain { color: var(--accent); }
 
 /* ====================================================================
+   SEO HELPER — visually hidden text (keeps H1 semantic, hides from design)
+   ==================================================================== */
+.djf-visually-hidden {
+  position: absolute !important;
+  width: 1px !important; height: 1px !important;
+  padding: 0 !important; margin: -1px !important;
+  overflow: hidden !important; clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important; border: 0 !important;
+}
+
+/* ====================================================================
+   HOMEPAGE SEO COPY BLOCK
+   ==================================================================== */
+.djf-seo-copy { padding-block: clamp(3rem, 2rem + 3vw, 5rem); }
+.djf-seo-copy__grid {
+  display: grid; grid-template-columns: 1fr 1.6fr;
+  gap: clamp(2rem, 1.5rem + 2vw, 4rem);
+  align-items: start;
+}
+@media (max-width: 860px) { .djf-seo-copy__grid { grid-template-columns: 1fr; } }
+.djf-seo-copy__body p {
+  color: var(--muted);
+  font-size: 1.02rem;
+  line-height: 1.75;
+  margin: 0 0 1rem;
+}
+.djf-seo-copy__body p strong { color: var(--contrast); font-weight: 500; }
+.djf-seo-copy__ctas { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 1.5rem; }
+
+/* ====================================================================
+   BOOKING FAQ — accordion
+   ==================================================================== */
+.djf-faq { display: flex; flex-direction: column; gap: .75rem; max-width: 820px; margin-inline: auto; }
+.djf-faq__item {
+  background: var(--base);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: 0;
+  overflow: hidden;
+  transition: border-color .2s var(--ease);
+}
+.djf-faq__item[open] { border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); }
+.djf-faq__q {
+  cursor: pointer;
+  padding: 1.1rem 1.4rem;
+  font-family: var(--ff-heading);
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--contrast);
+  list-style: none;
+  position: relative;
+  padding-right: 3rem;
+}
+.djf-faq__q::-webkit-details-marker { display: none; }
+.djf-faq__q::after {
+  content: "+";
+  position: absolute; right: 1.4rem; top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--ff-mono);
+  font-size: 1.4rem;
+  color: var(--accent);
+  transition: transform .25s var(--ease);
+}
+.djf-faq__item[open] .djf-faq__q::after { transform: translateY(-50%) rotate(45deg); }
+.djf-faq__a {
+  padding: 0 1.4rem 1.4rem;
+  color: var(--muted);
+  line-height: 1.65;
+}
+.djf-faq__a p { margin: 0; }
+
+/* ====================================================================
    FEATURED VIDEO
    ==================================================================== */
 .djf-video-feature .djf-video-frame {
